@@ -31,7 +31,18 @@ jobs:
 
       - name: npx commitlint
         run: |
-          BASE=$(git merge-base HEAD origin/${{ github.base_ref }})
+          # Determine base commit
+          if [ -n "${{ github.base_ref }}" ]; then
+            # PR: find merge base with target branch
+            BASE=$(git merge-base HEAD origin/${{ github.base_ref }})
+          else
+            # Push event: lint all commits from root
+            BASE=$(git rev-list --max-parents=0 HEAD)
+          fi
+
+          echo "Linting commits from $BASE to HEAD"
+
+          # Lint commit messages
           git log $BASE..HEAD --pretty=format:%s | npx commitlint
 
       - run: npx prettier -c "**/*.{md,json}"
