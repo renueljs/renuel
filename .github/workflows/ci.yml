@@ -45,7 +45,7 @@ jobs:
           # Lint commit messages
           git log $BASE..HEAD --pretty=format:%s | npx commitlint
 
-      - run: npx prettier -c "**/*.{md,json}"
+      - run: npx prettier -c "**/*.{json,md,yml}"
 
       - run: npx eslint . --max-warnings=0
 
