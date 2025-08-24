@@ -15,19 +15,11 @@ permissions:
   packages: write
 
 jobs:
-  debug:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo '${{ toJSON(github.event.workflow_run) }}'
   release:
     if: >
       github.event.workflow_run.conclusion == 'success' &&
       ( github.event.workflow_run.head_branch == 'master' ||
-        github.event.workflow_run.head_branch == 'next' ||
-        github.event.workflow_run.pull_requests.base.ref == 'master' ||
-        ( github.event.workflow_run.pull_requests.base.ref == 'next' &&
-          github.event.workflow_run.pull_requests.head.ref != 'master'
-        )
+        github.event.workflow_run.head_branch == 'next'
       )
     runs-on: ubuntu-latest
     steps:
@@ -43,7 +35,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npx auto ship
+      - run: npx auto shipit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
