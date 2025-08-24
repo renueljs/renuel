@@ -31,8 +31,8 @@ jobs:
 
       - name: npx commitlint
         run: |
-          git log origin/${{ github.base_ref }}..HEAD --pretty=format:%s | \
-          npx commitlint
+          BASE=$(git merge-base HEAD origin/${{ github.base_ref }})
+          git log $BASE..HEAD --pretty=format:%s | npx commitlint
 
       - run: npx prettier -c "**/*.{md,json}"
 
