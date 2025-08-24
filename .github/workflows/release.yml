@@ -35,6 +35,9 @@ jobs:
 
       - run: npm ci
 
+      - name: npm whoami
+        run: npm whoami || echo "no token"
+
       - run: npx auto shipit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
