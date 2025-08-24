@@ -31,13 +31,15 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
           registry-url: "https://registry.npmjs.org/"
+          always-auth: true
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - run: npm ci
 
       - name: npm whoami
         run: |
           npm whoami || echo "no token"
-          echo "NPM_TOKEN length = ${#NPM_TOKEN}"
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
