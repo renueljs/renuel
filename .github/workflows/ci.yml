@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  push:
+    branches: [master, next]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: protect master
+        if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master'
+        run: |
+          if [ "${{ github.event.pull_request.head.ref }}" != "next" ]; then
+            echo "PRs to master must come from the 'next' branch only."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: npx commitlint
+        run: |
+          git log origin/${{ github.base_ref }}..HEAD --pretty=format:%s | \
+          npx commitlint
+
+      - run: npx prettier -c "**/*.{md,json}"
+
+      - run: npx eslint . --max-warnings=0
+
+      - run: npm test

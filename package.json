@@ -1,0 +1,67 @@
+{
+  "name": "renuel",
+  "description": "Build React UIs without JSX. Type-safe, composable, and 100% JavaScript/TypeScript.",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/renueljs/renuel.git"
+  },
+  "homepage": "https://github.com/renueljs/renuel#readme",
+  "bugs": {
+    "url": "https://github.com/renueljs/renuel/issues"
+  },
+  "keywords": [
+    "react",
+    "jsx",
+    "typescript",
+    "ui",
+    "components",
+    "type-safe",
+    "no-jsx",
+    "hyperscript",
+    "vanilla"
+  ],
+  "engines": {
+    "node": ">=23.6.0",
+    "npm": ">=10.9.2"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@eslint/js": "^9.34.0",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.1.11",
+    "@typescript-eslint/eslint-plugin": "^8.40.0",
+    "auto": "^11.3.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^4.2.0",
+    "global-jsdom": "^26.0.0",
+    "husky": "^8.0.0",
+    "prettier": "^3.6.2",
+    "react": "^19.1.1",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.40.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "prepublishOnly": "tsc --outDir dist/cjs --module CommonJS && tsc --outDir dist/esm --module ESNext && tsc --outDir dist/types --emitDeclarationOnly",
+    "test": "node src/index.spec.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  }
+}
