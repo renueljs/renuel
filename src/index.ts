@@ -112,7 +112,12 @@ const createStandardFactory = <
   const factory: any = (
     props: Parameters<typeof React.createElement>[1],
     ...children: Parameters<typeof React.createElement>[2][]
-  ) => React.createElement(elementType, props, ...children);
+  ) =>
+    React.createElement(
+      elementType,
+      props,
+      ...(props && "children" in props ? [] : children),
+    );
 
   return { [name]: factory } as Record<Name, StandardFactory<ElementType>>;
 };
