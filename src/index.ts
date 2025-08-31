@@ -50,8 +50,6 @@ export type ReactElement<ElementType extends React.ElementType> =
     ElementType
   >;
 
-// --- NEW UTILITY TYPES ---
-
 /** Combines ExpectedProps with a generic P, ensuring no excess properties. */
 type NoExcessProps<ExpectedProps, ActualProps> = ExpectedProps & {
   [P in keyof ActualProps]: P extends keyof ExpectedProps
@@ -62,7 +60,7 @@ type NoExcessProps<ExpectedProps, ActualProps> = ExpectedProps & {
 /** A function that accepts props and children, and returns a React element. */
 type FactoryFunction<Props, ElementType extends React.ElementType> = <const P>(
   props: NoExcessProps<Props, P>,
-  ...children: ChildrenArgs<ElementType>
+  ...children: P extends { children: unknown } ? [] : ChildrenArgs<ElementType>
 ) => ReactElement<ElementType>;
 
 /** A curried function that returns a new function taking final props. */
@@ -74,10 +72,11 @@ type CurriedFinalFunction<
   ? <const P>(props: NoExcessProps<Props, P>) => ReactElement<ElementType>
   : <const P>(props?: NoExcessProps<Props, P>) => ReactElement<ElementType>;
 
-// --- REFACTORED FACTORY TYPES ---
-
 export type StandardFactory<ElementType extends React.ElementType> =
-  FactoryFunction<AttributeProps<ElementType>, ElementType>;
+  FactoryFunction<
+    React.ComponentProps<ElementType> & React.Attributes,
+    ElementType
+  >;
 
 export type SkipPropsFactory<ElementType extends React.ElementType> =
   AnyRequired<AttributeProps<ElementType>> extends false
@@ -179,8 +178,6 @@ const createPartialSkipPropsFactory = <
     PartialSkipPropsFactory<ElementType>
   >;
 };
-
-// --- FINAL COMPONENT ASSEMBLY ---
 
 type Factories<
   Name extends string,
