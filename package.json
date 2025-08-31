@@ -52,7 +52,7 @@
   "scripts": {
     "prepare": "husky install",
     "prepublishOnly": "tsc --outDir dist/cjs --module CommonJS && tsc --outDir dist/esm --module ESNext && tsc --outDir dist/types --emitDeclarationOnly",
-    "test": "node src/index.spec.ts",
+    "test": "tsc --project tsconfig.test.json && node src/index.spec.ts",
     "test-watch": "node --watch src/index.spec.ts"
   },
   "files": [
