@@ -8,7 +8,6 @@
     "outDir": "dist/esm",
     "strict": true,
     "moduleResolution": "Node",
-    "jsx": "react-jsx",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

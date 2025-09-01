@@ -73,10 +73,7 @@ type CurriedFinalFunction<
   : <const P>(props?: NoExcessProps<Props, P>) => ReactElement<ElementType>;
 
 export type StandardFactory<ElementType extends React.ElementType> =
-  FactoryFunction<
-    React.ComponentProps<ElementType> & React.Attributes,
-    ElementType
-  >;
+  FactoryFunction<AttributeProps<ElementType>, ElementType>;
 
 export type SkipPropsFactory<ElementType extends React.ElementType> =
   AnyRequired<AttributeProps<ElementType>> extends false
