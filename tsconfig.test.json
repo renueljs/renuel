@@ -3,8 +3,6 @@
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "Node",
-    "jsx": "react-jsx",
     "noEmit": true
-  },
-  "include": ["src/**/*.spec.ts", "src/**/*.spec.tsx"]
+  }
 }
