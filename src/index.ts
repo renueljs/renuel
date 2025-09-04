@@ -15,8 +15,12 @@ type RemoveNever<T> = {
   [K in keyof T as T[K] extends never ? never : K]: T[K];
 };
 
+type DataProps<ElementType> = ElementType extends string
+  ? { [K in `data-${string}`]?: string }
+  : unknown;
+
 type AttributeProps<ElementType extends React.ElementType> = SafeOmit<
-  React.ComponentProps<ElementType>,
+  React.ComponentProps<ElementType> & DataProps<ElementType>,
   "children"
 > &
   React.Attributes;
