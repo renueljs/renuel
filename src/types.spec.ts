@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 
-import { _a, component, p$ } from "./index.ts";
+import { _a, _html, component, html, p$ } from "./index.ts";
 
 const { Message, Message$ } = component(
   "Message",
@@ -44,3 +44,6 @@ Button$(_a({ href: "#", asdf: 1 }));
 
 // @ts-expect-error conflicting prop
 Button$(_a({ href: "#", style: { textDecoration: "none" } }));
+
+html({ "data-theme": "dark" });
+_html({ "data-theme": "dark" });
