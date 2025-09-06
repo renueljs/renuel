@@ -3,10 +3,8 @@ import "global-jsdom/register";
 import { render } from "@testing-library/react";
 import assert from "node:assert";
 import { after, afterEach, test } from "node:test";
-import { createElement, type ReactNode } from "react";
-import { jsx, jsxs } from "react/jsx-runtime";
 
-import { component, ul$ } from "./index.ts";
+import { _div, _div$, div, div$ } from "./index.ts";
 
 function spyOn<
   O,
@@ -61,69 +59,24 @@ after(() => {
   Object.values(mocks).forEach(mock => mock.restore());
 });
 
-{
-  const description = ({
-    children,
-    transform,
-  }: {
-    children: 0 | 1 | 2;
-    transform: "classic" | "automatic";
-  }) =>
-    `standard factory using ${transform} jsx transform with ${children === 2 ? "multiple children" : children ? "single child" : "no children"}`;
+test("div standard factory", () => {
+  const screen = render(div({ role: "alert" }));
+  screen.getByRole("alert");
+});
 
-  const { TestComponent } = component(
-    "TestComponent",
-    ({ children }: { children: ReactNode }) => ul$(...[children].flat()),
-  );
+test("div skip props factory", () => {
+  const screen = render(div$("Hello"));
+  screen.getByText("Hello");
+});
 
-  test(description({ transform: "automatic", children: 2 }), async () => {
-    const screen = render(
-      jsxs(TestComponent, {
-        children: [jsx("li", { children: "A" }), jsx("li", { children: "B" })],
-      }),
-    );
-    assert.strictEqual((await screen.findAllByRole("listitem")).length, 2);
-  });
+test("div partial factory", async () => {
+  const screen = render(_div({ role: "alert" })({ "data-testid": "el" }));
+  const el = await screen.findByTestId("el");
+  assert.strictEqual("alert", el.role);
+});
 
-  test(description({ transform: "automatic", children: 1 }), async () => {
-    const screen = render(
-      jsx(TestComponent, {
-        children: jsx("li", { children: "A" }),
-      }),
-    );
-    assert.strictEqual((await screen.findAllByRole("listitem")).length, 1);
-  });
-
-  test(description({ transform: "automatic", children: 0 }), () => {
-    const screen = render(
-      jsxs(TestComponent, {
-        children: [],
-      }),
-    );
-    assert.strictEqual(screen.getByRole("list").innerHTML, "");
-  });
-
-  test(description({ transform: "classic", children: 2 }), async () => {
-    const screen = render(
-      createElement(
-        TestComponent,
-        null,
-        createElement("li", null, "A"),
-        createElement("li", null, "B"),
-      ),
-    );
-    assert.strictEqual((await screen.findAllByRole("listitem")).length, 2);
-  });
-
-  test(description({ transform: "classic", children: 1 }), async () => {
-    const screen = render(
-      createElement(TestComponent, null, createElement("li", null, "A")),
-    );
-    assert.strictEqual((await screen.findAllByRole("listitem")).length, 1);
-  });
-
-  test(description({ transform: "classic", children: 0 }), () => {
-    const screen = render(createElement(TestComponent));
-    assert.strictEqual(screen.getByRole("list").innerHTML, "");
-  });
-}
+test("div partial skip props factory", async () => {
+  const screen = render(_div$("Hello")({ role: "alert" }));
+  const el = await screen.findByRole("alert");
+  assert.strictEqual("Hello", el.textContent);
+});

@@ -1,12 +1,13 @@
 import * as React from "react";
 
-type SafeOmit<O, K extends keyof O> = O extends unknown ? Omit<O, K> : never;
+type SafeOmit<O, K> = O extends unknown ? Omit<O, Extract<K, keyof O>> : never;
 
 type KeysWithUndefined<T> = {
   [K in keyof T]: undefined extends T[K] ? K : never;
 }[keyof T];
 
 type OptionalKeys<T> = KeysWithUndefined<T>;
+
 type RequiredKeys<T> = Exclude<keyof T, OptionalKeys<T>>;
 
 type AnyRequired<T> = RequiredKeys<T> extends never ? false : true;
@@ -19,24 +20,16 @@ type DataProps<ElementType> = ElementType extends string
   ? { [K in `data-${string}`]?: string }
   : unknown;
 
-type AttributeProps<ElementType extends React.ElementType> = SafeOmit<
-  React.ComponentProps<ElementType> & DataProps<ElementType>,
-  "children"
-> &
-  React.Attributes;
+type AttributeProps<Props> = SafeOmit<Props, "children"> & React.Attributes;
 
 // Helper to determine the *final* type of children, whether it's an array or a single value
-type FinalChildrenType<T> =
-  T extends Iterable<infer Item>
-    ? T extends string // Special case for string: treat as single value
-      ? T
-      : Item[] // For other iterables (arrays), return an array of the item type
+type FinalChildrenType<T> = T extends string
+  ? T
+  : T extends Iterable<infer Item>
+    ? Item[] // For other iterables (arrays), return an array of the item type
     : T; // For single, non-iterable values
 
-type ChildrenArgs<
-  ElementType extends React.ElementType,
-  Props = React.ComponentProps<ElementType>,
-> = "children" extends keyof Props
+type ChildrenArgs<Props> = "children" extends keyof Props
   ? FinalChildrenType<Props["children"]> extends infer Children
     ? // If children are an array type (like `string[]` or `number[]`), return that type directly
       Children extends unknown[]
@@ -48,12 +41,6 @@ type ChildrenArgs<
     : []
   : [];
 
-export type ReactElement<ElementType extends React.ElementType> =
-  React.ReactElement<
-    React.ComponentProps<ElementType> & React.Attributes,
-    ElementType
-  >;
-
 /** Combines ExpectedProps with a generic P, ensuring no excess properties. */
 type NoExcessProps<ExpectedProps, ActualProps> = ExpectedProps & {
   [P in keyof ActualProps]: P extends keyof ExpectedProps
@@ -61,11 +48,17 @@ type NoExcessProps<ExpectedProps, ActualProps> = ExpectedProps & {
     : never;
 };
 
-/** A function that accepts props and children, and returns a React element. */
-type FactoryFunction<Props, ElementType extends React.ElementType> = <const P>(
-  props: NoExcessProps<Props, P>,
-  ...children: P extends { children: unknown } ? [] : ChildrenArgs<ElementType>
-) => ReactElement<ElementType>;
+type StandardFactory<Props, ElementType extends React.ElementType> = <const P>(
+  props: NoExcessProps<AttributeProps<Props>, P>,
+  ...children: P extends { children: unknown } ? [] : ChildrenArgs<Props>
+) => React.ReactElement<Props, ElementType>;
+
+type SkipPropsFactory<Props, ElementType extends React.ElementType> =
+  AnyRequired<AttributeProps<Props>> extends false
+    ? (
+        ...children: ChildrenArgs<Props>
+      ) => React.ReactElement<Props, ElementType>
+    : never;
 
 /** A curried function that returns a new function taking final props. */
 type CurriedFinalFunction<
@@ -73,137 +66,70 @@ type CurriedFinalFunction<
   ElementType extends React.ElementType,
   HasRequiredProps extends boolean,
 > = HasRequiredProps extends true
-  ? <const P>(props: NoExcessProps<Props, P>) => ReactElement<ElementType>
-  : <const P>(props?: NoExcessProps<Props, P>) => ReactElement<ElementType>;
+  ? <const P>(
+      props: NoExcessProps<Props, P>,
+    ) => React.ReactElement<Props, ElementType>
+  : <const P>(
+      props?: NoExcessProps<Props, P>,
+    ) => React.ReactElement<Props, ElementType>;
 
-export type StandardFactory<ElementType extends React.ElementType> =
-  FactoryFunction<AttributeProps<ElementType>, ElementType>;
-
-export type SkipPropsFactory<ElementType extends React.ElementType> =
-  AnyRequired<AttributeProps<ElementType>> extends false
-    ? (...children: ChildrenArgs<ElementType>) => ReactElement<ElementType>
-    : never;
-
-export type PartialFactory<ElementType extends React.ElementType> = <const P0>(
-  props: NoExcessProps<Partial<AttributeProps<ElementType>>, P0>,
-  ...children: ChildrenArgs<ElementType>
+type PartialFactory<Props, ElementType extends React.ElementType> = <const P0>(
+  props: NoExcessProps<Partial<AttributeProps<Props>>, P0>,
+  ...children: ChildrenArgs<Props>
 ) => CurriedFinalFunction<
-  SafeOmit<AttributeProps<ElementType>, keyof P0>,
+  SafeOmit<AttributeProps<Props>, keyof P0>,
   ElementType,
-  AnyRequired<SafeOmit<AttributeProps<ElementType>, keyof P0>>
+  AnyRequired<SafeOmit<AttributeProps<Props>, keyof P0>>
 >;
 
-export type PartialSkipPropsFactory<ElementType extends React.ElementType> = (
-  ...children: ChildrenArgs<ElementType>
+type PartialSkipPropsFactory<Props, ElementType extends React.ElementType> = (
+  ...children: ChildrenArgs<Props>
 ) => CurriedFinalFunction<
-  AttributeProps<ElementType>,
+  AttributeProps<Props>,
   ElementType,
-  AnyRequired<AttributeProps<ElementType>>
+  AnyRequired<AttributeProps<Props>>
 >;
-
-const createStandardFactory = <
-  const Name extends string,
-  ElementType extends React.ElementType,
->(
-  name: Name,
-  elementType: ElementType,
-) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const factory: any = (
-    props: Parameters<typeof React.createElement>[1],
-    ...children: Parameters<typeof React.createElement>[2][]
-  ) =>
-    React.createElement(
-      elementType,
-      props,
-      ...(props && "children" in props ? [] : children),
-    );
-
-  return { [name]: factory } as Record<Name, StandardFactory<ElementType>>;
-};
-
-const createSkipPropsFactory = <
-  const Name extends string,
-  ElementType extends React.ElementType,
->(
-  name: Name,
-  elementType: ElementType,
-) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const factory: any = (
-    ...children: Parameters<typeof React.createElement>[2][]
-  ) => React.createElement(elementType, null, ...children);
-
-  return { [`${name}$`]: factory } as RemoveNever<
-    Record<`${Name}$`, SkipPropsFactory<ElementType>>
-  >;
-};
-
-const createPartialFactory = <
-  const Name extends string,
-  ElementType extends React.ElementType,
->(
-  name: Name,
-  elementType: ElementType,
-) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const factory: any =
-    (
-      props0: Parameters<typeof React.createElement>[1],
-      ...children: Parameters<typeof React.createElement>[2][]
-    ) =>
-    (props1: Parameters<typeof React.createElement>[1]) =>
-      React.createElement(elementType, { ...props0, ...props1 }, ...children);
-
-  return { [`_${name}`]: factory } as Record<
-    `_${Name}`,
-    PartialFactory<ElementType>
-  >;
-};
-
-const createPartialSkipPropsFactory = <
-  const Name extends string,
-  ElementType extends React.ElementType,
->(
-  name: Name,
-  elementType: ElementType,
-) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const factory: any =
-    (...children: Parameters<typeof React.createElement>[2][]) =>
-    (props: Parameters<typeof React.createElement>[1]) =>
-      React.createElement(elementType, props, ...children);
-
-  return { [`_${name}$`]: factory } as Record<
-    `_${Name}$`,
-    PartialSkipPropsFactory<ElementType>
-  >;
-};
-
-type Factories<
-  Name extends string,
-  ElementType extends React.ElementType,
-> = ReturnType<typeof createStandardFactory<Name, ElementType>> &
-  ReturnType<typeof createSkipPropsFactory<Name, ElementType>> &
-  ReturnType<typeof createPartialFactory<Name, ElementType>> &
-  ReturnType<typeof createPartialSkipPropsFactory<Name, ElementType>>;
 
 export const component = <
   const Name extends string,
   ElementType extends React.ElementType,
+  Props = React.ComponentProps<ElementType> & DataProps<ElementType>,
 >(
   name: Name,
   elementType: ElementType,
-) => {
-  if (typeof elementType === "function" && !elementType.displayName) {
-    elementType.displayName = name;
-  }
+): RemoveNever<
+  Record<Name, StandardFactory<Props, ElementType>> &
+    Record<`${Name}$`, SkipPropsFactory<Props, ElementType>> &
+    Record<`_${Name}`, PartialFactory<Props, ElementType>> &
+    Record<`_${Name}$`, PartialSkipPropsFactory<Props, ElementType>>
+> => {
+  const standard = (
+    props: Parameters<typeof React.createElement>[1],
+    ...children: Parameters<typeof React.createElement>[2][]
+  ) => React.createElement(elementType, props, ...children);
+
+  const skipProps = (...children: Parameters<typeof standard>[1][]) =>
+    standard(null, ...children);
+
+  const partial =
+    (
+      p0: Parameters<typeof standard>[0],
+      ...children: Parameters<typeof standard>[1][]
+    ) =>
+    (p1: Parameters<typeof standard>[0]) =>
+      standard({ ...p0, ...p1 }, ...children);
+
+  const partialSkipProps =
+    (...children: Parameters<typeof standard>[1][]) =>
+    (props: Parameters<typeof standard>[0]) =>
+      standard(props, ...children);
+
   return {
-    ...createStandardFactory(name, elementType),
-    ...createSkipPropsFactory(name, elementType),
-    ...createPartialFactory(name, elementType),
-    ...createPartialSkipPropsFactory(name, elementType),
-  } as Factories<Name, ElementType>;
+    [name]: standard,
+    [`${name}$`]: skipProps,
+    [`_${name}`]: partial,
+    [`_${name}$`]: partialSkipProps,
+  } as ReturnType<typeof component<Name, ElementType, Props>>;
 };
 
 export const { Fragment, Fragment$ } = component("Fragment", React.Fragment);
