@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 
-import { _a, _html, component, html, p$ } from "./index.ts";
+import { _a, _html, body$, component, head$, html, p$ } from "./index.ts";
 
 const { Message, Message$ } = component(
   "Message",
@@ -47,3 +47,5 @@ Button$(_a({ href: "#", style: { textDecoration: "none" } }));
 
 html({ "data-theme": "dark" });
 _html({ "data-theme": "dark" });
+
+html({ lang: "en" }, head$(), body$("Hello world"));

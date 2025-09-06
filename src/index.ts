@@ -29,9 +29,11 @@ type ChildrenArgs<Props> = Props extends { children?: infer Children }
           ? Item[]
           : Children
     ) extends infer C
-    ? "children" extends RequiredKeys<Props>
-      ? [C]
-      : [C?]
+    ? C extends unknown[]
+      ? C
+      : "children" extends RequiredKeys<Props>
+        ? [C]
+        : [C?]
     : []
   : [];
 
