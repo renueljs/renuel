@@ -2,13 +2,12 @@ import * as React from "react";
 
 type SafeOmit<O, K> = O extends unknown ? Omit<O, Extract<K, keyof O>> : never;
 
-type KeysWithUndefined<T> = {
-  [K in keyof T]: undefined extends T[K] ? K : never;
-}[keyof T];
-
-type OptionalKeys<T> = KeysWithUndefined<T>;
-
-type RequiredKeys<T> = Exclude<keyof T, OptionalKeys<T>>;
+type RequiredKeys<T> = Exclude<
+  keyof T,
+  {
+    [K in keyof T]: undefined extends T[K] ? K : never;
+  }[keyof T]
+>;
 
 type AnyRequired<T> = RequiredKeys<T> extends never ? false : true;
 
@@ -22,22 +21,17 @@ type DataProps<ElementType> = ElementType extends string
 
 type AttributeProps<Props> = SafeOmit<Props, "children"> & React.Attributes;
 
-// Helper to determine the *final* type of children, whether it's an array or a single value
-type FinalChildrenType<T> = T extends string
-  ? T
-  : T extends Iterable<infer Item>
-    ? Item[] // For other iterables (arrays), return an array of the item type
-    : T; // For single, non-iterable values
-
-type ChildrenArgs<Props> = "children" extends keyof Props
-  ? FinalChildrenType<Props["children"]> extends infer Children
-    ? // If children are an array type (like `string[]` or `number[]`), return that type directly
-      Children extends unknown[]
-      ? Children
-      : // Otherwise, children are a single value (string, number, etc.)
-        "children" extends RequiredKeys<Props>
-        ? [Children] // Required single child becomes a tuple with one element
-        : [Children?] // Optional single child becomes a tuple with an optional element
+type ChildrenArgs<Props> = Props extends { children?: infer Children }
+  ? (
+      Children extends string
+        ? string
+        : Children extends Iterable<infer Item>
+          ? Item[]
+          : Children
+    ) extends infer C
+    ? "children" extends RequiredKeys<Props>
+      ? [C]
+      : [C?]
     : []
   : [];
 
