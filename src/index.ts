@@ -57,34 +57,25 @@ type SkipPropsFactory<Props, ElementType extends React.ElementType> =
     : never;
 
 /** A curried function that returns a new function taking final props. */
-type CurriedFinalFunction<
-  Props,
-  ElementType extends React.ElementType,
-  HasRequiredProps extends boolean,
-> = HasRequiredProps extends true
-  ? <const P>(
-      props: NoExcessProps<Props, P>,
-    ) => React.ReactElement<Props, ElementType>
-  : <const P>(
-      props?: NoExcessProps<Props, P>,
-    ) => React.ReactElement<Props, ElementType>;
+type CurriedFinalFunction<Props, ElementType extends React.ElementType> =
+  AnyRequired<Props> extends true
+    ? <const P>(
+        props: NoExcessProps<Props, P>,
+      ) => React.ReactElement<Props, ElementType>
+    : <const P>(
+        props?: NoExcessProps<Props, P>,
+      ) => React.ReactElement<Props, ElementType>;
 
 type PartialFactory<Props, ElementType extends React.ElementType> = <const P0>(
   props: NoExcessProps<Partial<AttributeProps<Props>>, P0>,
   ...children: ChildrenArgs<Props>
-) => CurriedFinalFunction<
-  SafeOmit<AttributeProps<Props>, keyof P0>,
-  ElementType,
-  AnyRequired<SafeOmit<AttributeProps<Props>, keyof P0>>
->;
+) => SafeOmit<AttributeProps<Props>, keyof P0> extends infer P1
+  ? CurriedFinalFunction<P1, ElementType>
+  : never;
 
 type PartialSkipPropsFactory<Props, ElementType extends React.ElementType> = (
   ...children: ChildrenArgs<Props>
-) => CurriedFinalFunction<
-  AttributeProps<Props>,
-  ElementType,
-  AnyRequired<AttributeProps<Props>>
->;
+) => CurriedFinalFunction<AttributeProps<Props>, ElementType>;
 
 export const component = <
   const Name extends string,
