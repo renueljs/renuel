@@ -27,8 +27,8 @@ type NormalizeChildren<Children> = Children extends string
     ? Item[]
     : Children;
 
-type ChildrenArgs<Props> = Props extends { children?: infer Children }
-  ? NormalizeChildren<Children> extends infer C
+type ChildrenArgs<Props> = "children" extends keyof Props
+  ? NormalizeChildren<Props["children"]> extends infer C
     ? C extends unknown[]
       ? C
       : "children" extends RequiredKeys<Props>
