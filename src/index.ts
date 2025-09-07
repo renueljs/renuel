@@ -21,14 +21,14 @@ type DataProps<ElementType> = ElementType extends string
 
 type AttributeProps<Props> = SafeOmit<Props, "children"> & React.Attributes;
 
-type NormalizeChildren<Children> = Children extends string
-  ? string
-  : Children extends Iterable<infer Item>
-    ? Item[]
-    : Children;
-
 type ChildrenArgs<Props> = Props extends { children?: infer Children }
-  ? NormalizeChildren<Children> extends infer C
+  ? (
+      Children extends string
+        ? string
+        : Children extends Iterable<infer Item>
+          ? Item[]
+          : Children
+    ) extends infer C
     ? C extends unknown[]
       ? C
       : "children" extends RequiredKeys<Props>
