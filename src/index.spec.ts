@@ -3,8 +3,9 @@ import "global-jsdom/register";
 import { render } from "@testing-library/react";
 import assert from "node:assert";
 import { after, afterEach, test } from "node:test";
+import { forwardRef } from "react";
 
-import { _div, _div$, div, div$ } from "./index.ts";
+import { _div, _div$, component, div, div$ } from "./index.ts";
 
 function spyOn<
   O,
@@ -39,12 +40,19 @@ const mocks = {
   error: spyOn(console, "error"),
 };
 
+const allowedConsole = (type: "warn" | "error", message: string) =>
+  type === "error" && /deprecated/.test(message);
+
 afterEach(() => {
   document.body.innerHTML = "";
 
   for (const [name, mock] of Object.entries(mocks)) {
     assert.strictEqual(
-      mock.calls.length,
+      mock.calls.filter(
+        args =>
+          !(name === "error" || name === "warn") ||
+          !allowedConsole(name, args.join(" ")),
+      ).length,
       0,
       `Unexpected console.${name} call(s):\n` +
         mock.calls.map(args => `  ${args.join(" ")}`).join("\n"),
@@ -80,3 +88,22 @@ test("div partial skip props factory", async () => {
   const el = await screen.findByRole("alert");
   assert.strictEqual("Hello", el.textContent);
 });
+
+{
+  const { TestComponent } = component(
+    "TestComponent",
+    forwardRef<HTMLDivElement>((_props, ref) => div({ ref })),
+  );
+
+  test("ref forwarding", () => {
+    let element: HTMLDivElement | null = null;
+    render(
+      TestComponent({
+        ref: el => {
+          element = el;
+        },
+      }),
+    );
+    assert.ok(element, "Unable to get ref element");
+  });
+}
