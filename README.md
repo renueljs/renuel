@@ -14,7 +14,7 @@ div({ className: "greeting" }, "Hello ", em$("world"))
 
 - **Just functions**: Build React components without JSX.
 - **Flexible and concise**: Factory variants allow props and children to be passed with minimal syntax, reducing boilerplate without compromising type safety.
-- **Precision composition**: Polymorphic components are both convenient and sound.
+- **Precision composition**: A polymorphic component approach that delivers convenience and correctness
 - **Type safety by default**: Excess props are disallowed, and prop conflicts must be resolved explicitly.
 - **Expressive JavaScript**: Take full advantage of JavaScript and TypeScript features with no extra syntax or context-switching.
 
@@ -178,3 +178,9 @@ A way to remember this naming convention is:
 - `_` means "partial", i.e. returns another factory
 
 This pattern applies to both native tags and custom components, making composition predictable and type-safe with minimal syntax.
+
+> [!NOTE]
+> In the example above, invoking the curried factories with additional props is
+> for demonstration purposes only. In practice, you’d typically pass the curried
+> factory as a child to a polymorphic component, which is then responsible for
+> supplying the remaining props.
