@@ -1,5 +1,17 @@
 # Renuel
 
+<a href="https://github.com/renueljs/renuel/tree/master"><img src="https://img.shields.io/badge/branch-master-blue" alt="master branch"></a>
+<a href="https://github.com/renueljs/renuel/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/renueljs/renuel/ci.yml?branch=master&color=blue" alt="master build status"></a>
+<a href="https://www.npmjs.com/package/renuel"><img src="https://img.shields.io/npm/v/renuel/latest.svg?label=npm&color=blue" alt="npm latest version"></a>
+<a href="https://bundlephobia.com/package/renuel@latest"><img src="https://img.shields.io/bundlephobia/minzip/renuel@latest?label=bundle%20size&color=blue" alt="npm bundle size latest"></a>
+<br>
+<a href="https://github.com/renueljs/renuel/tree/next"><img src="https://img.shields.io/badge/branch-next-orange" alt="next branch"></a>
+<a href="https://github.com/renueljs/renuel/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/renueljs/renuel/ci.yml?branch=next&color=orange" alt="next build status"></a>
+<a href="https://www.npmjs.com/package/renuel"><img src="https://img.shields.io/npm/v/renuel/next.svg?label=npm&color=orange" alt="npm next version"></a>
+<a href="https://bundlephobia.com/package/renuel@next"><img src="https://img.shields.io/bundlephobia/minzip/renuel@next?label=bundle%20size&color=orange" alt="npm bundle size next"></a>
+<br>
+<a href="https://github.com/renueljs/renuel/blob/next/LICENSE"><img src="https://img.shields.io/github/license/renueljs/renuel?color=greem" alt="license"></a>
+
 Renuel provides a flexible, type-safe system for building React UIs with plain
 functions—harnessing the full expressive power of JavaScript while avoiding the
 context-switching syntax of JSX.
@@ -161,6 +173,12 @@ Each tag (or custom component) comes with four factory variants:
 3. `_tag` (`_Component`): partial factory; returns a new factory after fixing some props.
 4. `_tag$` (`_Component$`): partial skip-props factory; like `_tag`, but starts with children.
 
+> [!TIP]
+> A way to remember the naming convention is:
+>
+> - `$` means "skip props", i.e. first argument is a child
+> - `_` means "partial", i.e. returns another factory
+
 Example with `div`:
 
 <!--prettier-ignore-start-->
@@ -172,15 +190,10 @@ _div$("Hello")({ className: "foo" })               // partial skip-props
 ```
 <!--prettier-ignore-end-->
 
-A way to remember this naming convention is:
-
-- `$` means "skip props", i.e. first argument is a child
-- `_` means "partial", i.e. returns another factory
-
-This pattern applies to both native tags and custom components, making composition predictable and type-safe with minimal syntax.
-
 > [!NOTE]
 > In the example above, invoking the curried factories with additional props is
 > for demonstration purposes only. In practice, you’d typically pass the curried
 > factory as a child to a polymorphic component, which is then responsible for
 > supplying the remaining props.
+
+This pattern applies to both native tags and custom components, making composition predictable and type-safe with minimal syntax.
