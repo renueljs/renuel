@@ -37,6 +37,8 @@ jobs:
 
       - run: npm ci
 
+      - uses: mxschmitt/action-tmate@v3
+
       - run: npx auto shipit
         env:
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
