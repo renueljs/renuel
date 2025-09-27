@@ -204,3 +204,69 @@ _div$("Hello")({ className: "foo" })               // partial skip-props
 > supplying the remaining props.
 
 This pattern applies to both native tags and custom components, making composition predictable and type-safe with minimal syntax.
+
+## Versus JSX
+
+If you already use JSX, Renuel will feel familiar — but with less syntax
+overhead and stronger type guarantees. Here are a few common patterns compared
+directly:
+
+### Mapping over data
+
+<!--prettier-ignore-start-->
+```tsx
+// JSX
+<ul>{items.map(i => (<li key={i.id}>{i.name}</li>))}</ul>
+
+// Renuel
+ul$(items.map(i => li({ key: i.id }, i.name)))
+```
+<!--prettier-ignore-end-->
+
+### Conditional rendering
+
+<!--prettier-ignore-start-->
+```
+// JSX
+<div>{isLoggedIn ? <p>Welcome back!</p> : <p>Please log in</p>}</div>
+
+// Renuel
+div$(isLoggedIn ? p$("Welcome back!") : p$("Please log in"))
+```
+<!--prettier-ignore-end-->
+
+### Function as Child Component
+
+<!--prettier-ignore-start-->
+```
+// JSX
+<Button>{({ style }) => <a href="/docs" style={style}>Docs</a>}</Button>
+
+// Renuel
+Button(_a({ href: "/docs" }, "Docs"))
+```
+<!--prettier-ignore-end-->
+
+### Object props
+
+<!--prettier-ignore-start-->
+```
+// JSX
+<div style={{ background: "blue", color: "white" }}>Hello world</div>
+
+// Renuel
+div({ style: { background: "blue", color: "white" } }, "Hello world")
+```
+<!--prettier-ignore-end-->
+
+### Special characters
+
+<!--prettier-ignore-start-->
+```
+// JSX
+<footer>&copy; 2025 MyCompany. All rights reserved.</footer>
+
+// Renuel
+footer$("© 2025 MyCompany. All rights reserved.")
+```
+<!--prettier-ignore-end-->
