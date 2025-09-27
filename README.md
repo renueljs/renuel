@@ -1,16 +1,23 @@
-# Renuel
+<p align="center">
+  <!-- npm-remove -->
+  <img alt="Renuel" src=".github/logo-dark.png#gh-dark-mode-only" height="256" style="max-width: 100%;">
+  <!-- /npm-remove -->
+  <img alt="Renuel" src=".github/logo-light.png#gh-light-mode-only" height="256" style="max-width: 100%;">
+</p>
 
-<a href="https://github.com/renueljs/renuel/tree/master"><img src="https://img.shields.io/badge/branch-master-blue" alt="master branch"></a>
-<a href="https://github.com/renueljs/renuel/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/renueljs/renuel/ci.yml?branch=master&color=blue" alt="master build status"></a>
-<a href="https://www.npmjs.com/package/renuel"><img src="https://img.shields.io/npm/v/renuel/latest.svg?label=npm&color=blue" alt="npm latest version"></a>
-<a href="https://bundlephobia.com/package/renuel@latest"><img src="https://img.shields.io/bundlephobia/minzip/renuel@latest?label=bundle%20size&color=blue" alt="npm bundle size latest"></a>
-<br>
-<a href="https://github.com/renueljs/renuel/tree/next"><img src="https://img.shields.io/badge/branch-next-orange" alt="next branch"></a>
-<a href="https://github.com/renueljs/renuel/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/renueljs/renuel/ci.yml?branch=next&color=orange" alt="next build status"></a>
-<a href="https://www.npmjs.com/package/renuel"><img src="https://img.shields.io/npm/v/renuel/next.svg?label=npm&color=orange" alt="npm next version"></a>
-<a href="https://bundlephobia.com/package/renuel@next"><img src="https://img.shields.io/bundlephobia/minzip/renuel@next?label=bundle%20size&color=orange" alt="npm bundle size next"></a>
-<br>
-<a href="https://github.com/renueljs/renuel/blob/next/LICENSE"><img src="https://img.shields.io/github/license/renueljs/renuel?color=greem" alt="license"></a>
+<p align="center">
+  <a href="https://github.com/renueljs/renuel/tree/master"><img src="https://img.shields.io/badge/branch-master-blue" alt="master branch"></a>
+  <a href="https://github.com/renueljs/renuel/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/renueljs/renuel/ci.yml?branch=master&color=blue" alt="master build status"></a>
+  <a href="https://www.npmjs.com/package/renuel"><img src="https://img.shields.io/npm/v/renuel/latest.svg?label=npm&color=blue" alt="npm latest version"></a>
+  <a href="https://bundlephobia.com/package/renuel@latest"><img src="https://img.shields.io/bundlephobia/minzip/renuel@latest?label=bundle%20size&color=blue" alt="npm bundle size latest"></a>
+  <br>
+  <a href="https://github.com/renueljs/renuel/tree/next"><img src="https://img.shields.io/badge/branch-next-orange" alt="next branch"></a>
+  <a href="https://github.com/renueljs/renuel/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/renueljs/renuel/ci.yml?branch=next&color=orange" alt="next build status"></a>
+  <a href="https://www.npmjs.com/package/renuel"><img src="https://img.shields.io/npm/v/renuel/next.svg?label=npm&color=orange" alt="npm next version"></a>
+  <a href="https://bundlephobia.com/package/renuel@next"><img src="https://img.shields.io/bundlephobia/minzip/renuel@next?label=bundle%20size&color=orange" alt="npm bundle size next"></a>
+</p>
+
+<hr>
 
 Renuel provides a flexible, type-safe system for building React UIs with plain
 functions—harnessing the full expressive power of JavaScript while avoiding the
