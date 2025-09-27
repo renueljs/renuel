@@ -1,8 +1,8 @@
 <p align="center">
   <!-- npm-remove -->
-  <img alt="Renuel" src=".github/logo-dark.png#gh-dark-mode-only" height="256" style="max-width: 100%;">
+  <img alt="Renuel" src=".github/logo-dark.png#gh-dark-mode-only" height="384" style="max-width: 100%;">
   <!-- /npm-remove -->
-  <img alt="Renuel" src=".github/logo-light.png#gh-light-mode-only" height="256" style="max-width: 100%;">
+  <img alt="Renuel" src=".github/logo-light.png#gh-light-mode-only" height="384" style="max-width: 100%;">
 </p>
 
 <p align="center">
@@ -226,7 +226,7 @@ ul$(items.map(i => li({ key: i.id }, i.name)))
 ### Conditional rendering
 
 <!--prettier-ignore-start-->
-```
+```tsx
 // JSX
 <div>{isLoggedIn ? <p>Welcome back!</p> : <p>Please log in</p>}</div>
 
@@ -238,7 +238,7 @@ div$(isLoggedIn ? p$("Welcome back!") : p$("Please log in"))
 ### Function as Child Component
 
 <!--prettier-ignore-start-->
-```
+```tsx
 // JSX
 <Button>{({ style }) => <a href="/docs" style={style}>Docs</a>}</Button>
 
@@ -250,7 +250,7 @@ Button(_a({ href: "/docs" }, "Docs"))
 ### Object props
 
 <!--prettier-ignore-start-->
-```
+```tsx
 // JSX
 <div style={{ background: "blue", color: "white" }}>Hello world</div>
 
@@ -262,7 +262,7 @@ div({ style: { background: "blue", color: "white" } }, "Hello world")
 ### Special characters
 
 <!--prettier-ignore-start-->
-```
+```tsx
 // JSX
 <footer>&copy; 2025 MyCompany. All rights reserved.</footer>
 
