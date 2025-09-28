@@ -25,7 +25,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.ref_name }}
 
       - uses: actions/setup-node@v4
         with:
@@ -37,8 +36,6 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - run: npm ci
-
-      - run: git tag --list 'v0.0.2-next.*' --sort=version:refname
 
       - run: npx auto shipit
         env:
