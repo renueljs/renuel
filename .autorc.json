@@ -8,5 +8,6 @@
         "setRcToken": false
       }
     ]
-  ]
+  ],
+  "prereleaseBranches": ["next"]
 }
