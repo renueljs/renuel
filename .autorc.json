@@ -9,5 +9,6 @@
       }
     ]
   ],
+  "baseBranch": "master",
   "prereleaseBranches": ["next"]
 }
