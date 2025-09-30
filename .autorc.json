@@ -10,10 +10,5 @@
     ]
   ],
   "baseBranch": "master",
-  "prereleaseBranches": [
-    {
-      "name": "next",
-      "prerelease": "next"
-    }
-  ]
+  "prereleaseBranches": ["next"]
 }
