@@ -1,3 +1,16 @@
+# v0.0.9 (Wed Oct 01 2025)
+
+#### 🐛 Bug Fix
+
+- misc: remove invalid auto flag [#50](https://github.com/renueljs/renuel/pull/50) ([@nsaunders](https://github.com/nsaunders))
+- misc: version number reset [#50](https://github.com/renueljs/renuel/pull/50) ([@nsaunders](https://github.com/nsaunders))
+
+#### Authors: 1
+
+- Nick Saunders ([@nsaunders](https://github.com/nsaunders))
+
+---
+
 # v0.0.7 (Tue Sep 30 2025)
 
 #### 🐛 Bug Fix
