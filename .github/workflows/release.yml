@@ -33,7 +33,7 @@ jobs:
           if [ "$BRANCH" == "master" ]; then
             echo "command=latest" >> $GITHUB_OUTPUT
           else
-            echo "command=next" >> $GITHUB_OUTPUT
+            echo "command=next --preid next" >> $GITHUB_OUTPUT
           fi
 
       - uses: actions/setup-node@v4
