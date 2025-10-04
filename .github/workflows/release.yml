@@ -47,25 +47,12 @@ jobs:
         run: npm version --no-git-tag-version "${{steps.version.outputs.NEW_VERSION}}"
 
       - name: version commit
-        uses: actions/github-script@v7
+        uses: EndBug/add-and-commit@v9
         with:
-          script: |
-            const version = process.env.VERSION;
-            const branch = process.env.BRANCH;
-
-            await github.rest.repos.createCommitForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `heads/${branch}`,
-              message: `misc: release v${version} [skip ci]`,
-              sha: context.sha,
-              files: ['package.json', 'package-lock.json'],
-            });
-
-            require('child_process').execSync('git push origin HEAD', { stdio: 'inherit' });
-        env:
-          VERSION: ${{ steps.version.outputs.NEW_VERSION }}
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          add: package.json package-lock.json
+          message: "misc: release v${{ steps.version.outputs.NEW_VERSION }}"
+          author_name: GitHub Actions
+          author_email: 41898282+github-actions[bot]@users.noreply.github.com
 
       - uses: softprops/action-gh-release@v2
         env:
