@@ -33,15 +33,7 @@ async function getTags() {
     ? list
         .split("\n")
         .map(x => x.trim())
-        .filter(x => {
-          try {
-            parseVersion(x);
-            return true;
-          } catch {
-            return false;
-          }
-        })
-        .sort(compareVersion)
+        .sort(semver.compareBuild)
         .reverse()
     : [];
 }
@@ -66,49 +58,6 @@ async function getCommits(sinceRef?: string) {
       return { sha, message };
     })
     .filter(x => !x.message.startsWith("misc: release"));
-}
-
-function parseVersion(tag: string) {
-  const pattern = /^v([0-9]+)\.([0-9]+)\.([0-9]+)(-next\.([0-9]+))?$/;
-  if (!pattern.test(tag)) {
-    throw new Error(
-      `Invalid tag: "${tag}" does not match pattern 0.0.0 or 0.0.0-next.0`,
-    );
-  }
-  const [_tag, major, minor, patch, _pre, pre] = tag.match(pattern) || [];
-  return Object.fromEntries(
-    Object.entries({ major, minor, patch, pre }).map(([key, value]) => [
-      key,
-      parseInt(value),
-    ]),
-  ) as Record<"major" | "minor" | "patch" | "pre", number>;
-}
-
-function compareVersion(tagA: string, tagB: string) {
-  const a = parseVersion(tagA);
-  const b = parseVersion(tagB);
-  if (a.major < b.major) {
-    return -1;
-  }
-  if (a.major > b.major) {
-    return 1;
-  }
-  if (a.minor < b.minor) {
-    return -1;
-  }
-  if (a.minor > b.minor) {
-    return 1;
-  }
-  if (a.patch < b.patch) {
-    return -1;
-  }
-  if (a.patch > b.patch) {
-    return 1;
-  }
-  if (!isNaN(a.pre)) {
-    return isNaN(b.pre) ? -1 : a.pre < b.pre ? -1 : a.pre > b.pre ? 1 : 0;
-  }
-  return isNaN(b.pre) ? 0 : 1;
 }
 
 function getBumpType<
@@ -201,7 +150,7 @@ async function main() {
 
   const previousRelease =
     branch === "next"
-      ? tags.find(t => compareVersion(t, nextTag) === -1)
+      ? tags.find(t => semver.compareBuild(t, nextTag) === -1)
       : latestTag;
 
   const commitsSinceRelease =
@@ -215,7 +164,10 @@ async function main() {
         branch === "next" ||
         Object.values(commitPrefixes).some(p => c.message.startsWith(p)),
     )
-    .map(c => `\n- ${c.message.split("\n")[0]} (${c.sha.substring(0, 7)})`)
+    .map(
+      c =>
+        `\n- ${c.message.split("\n")[0]}${/\s\(#[0-9]+\)$/.test(c.message) ? "" : ` (${c.sha.substring(0, 7)})`}`,
+    )
     .join("")}`;
 
   const versionOutput = `NEW_VERSION=${nextVersion}\n`;
