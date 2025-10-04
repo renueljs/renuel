@@ -26,16 +26,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.workflow_run.head_branch }}
-
-      - name: auto_command
-        id: auto_command
-        run: |
-          BRANCH=${{ github.event.workflow_run.head_branch }}
-          if [ "$BRANCH" == "master" ]; then
-            echo "command=latest" >> $GITHUB_OUTPUT
-          else
-            echo "command=next" >> $GITHUB_OUTPUT
-          fi
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-node@v4
         with:
@@ -48,12 +39,32 @@ jobs:
 
       - run: npm ci
 
-      - uses: mxschmitt/action-tmate@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: version calculation
+        id: version
+        run: node scripts/version.ts
 
-      - run: npx auto ${{ steps.auto_command.outputs.command }}
+      - name: version bump
+        run: npm version --no-git-tag-version "${{steps.version.outputs.NEW_VERSION}}"
+
+      - name: version commit
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: package.json package-lock.json
+          message: "misc: release v${{ steps.version.outputs.NEW_VERSION }}"
+          author_name: GitHub Actions
+          author_email: 41898282+github-actions[bot]@users.noreply.github.com
+
+      - uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.NEW_VERSION }}
+          target_commitish: ${{ github.event.workflow_run.head_branch }}
+          prerelease: ${{ github.event.workflow_run.head_branch == 'next' }}
+          body: ${{ steps.version.outputs.RELEASE_BODY }}
+
+      - if: github.event.workflow_run.head_branch == 'master'
+        run: npm publish
+
+      - if: github.event.workflow_run.head_branch == 'next'
+        run: npm publish --tag next
