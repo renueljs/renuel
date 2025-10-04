@@ -33,6 +33,7 @@ async function getTags() {
     ? list
         .split("\n")
         .map(x => x.trim())
+        .filter(Boolean)
         .sort(semver.compareBuild)
         .reverse()
     : [];
