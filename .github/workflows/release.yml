@@ -60,7 +60,7 @@ jobs:
         with:
           tag_name: v${{ steps.version.outputs.NEW_VERSION }}
           target_commitish: ${{ github.event.workflow_run.head_branch }}
-          prerelease: ${{ github.event.workflow_run.head_branch }}
+          prerelease: ${{ github.event.workflow_run.head_branch == 'next' }}
           body: ${{ steps.version.outputs.RELEASE_BODY }}
 
       - if: github.event.workflow_run.head_branch == 'master'
