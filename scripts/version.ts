@@ -14,7 +14,10 @@ async function run(cmd: string) {
     const { stdout } = await exec(cmd, { encoding: "utf8" });
     return stdout ? await text(stdout) : null;
   } catch (error) {
-    console.error(`Error executing command: ${cmd}`, error.message);
+    console.error(
+      `Error executing command: ${cmd}`,
+      ...(error instanceof Error ? [error.message] : []),
+    );
     process.exit(1);
   }
 }
@@ -47,7 +50,7 @@ async function getCommits(sinceRef?: string) {
   const delimiter = "---END---";
 
   const log = await run(
-    `git log${sinceRef ? ` ${sinceRef}..HEAD` : ""} --pretty=format:%H%n%s%n%b%n${delimiter}`,
+    `git log${sinceRef ? ` ${sinceRef}..HEAD` : ""} --merges --pretty=format:%H%n%s%n%b%n${delimiter}`,
   );
 
   if (!log) return [];
