@@ -5,5 +5,5 @@
     "moduleResolution": "Node",
     "noEmit": true
   },
-  "include": ["src"]
+  "include": ["scripts"]
 }
