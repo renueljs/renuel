@@ -56,9 +56,7 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: package.json package-lock.json
-          message: "misc: release v${{ steps.version.outputs.NEW_VERSION }}"
-          author_name: Renuel Release Bot
-          author_email: 2068216+Renuel-Release-Bot[bot]@users.noreply.github.com
+          message: "misc: release v${{ steps.version.outputs.NEW_VERSION }} [no ci]"
 
       - uses: softprops/action-gh-release@v2
         env:
