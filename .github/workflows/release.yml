@@ -57,10 +57,7 @@ jobs:
         with:
           add: package.json package-lock.json
           message: "misc: release v${{ steps.version.outputs.NEW_VERSION }} [no ci]"
-          author_name: Renuel Release Bot
-          author_email: 2068216+Renuel-Release-Bot[bot]@users.noreply.github.com
-          committer_name: Renuel Release Bot
-          committer_email: 2068216+Renuel-Release-Bot[bot]@users.noreply.github.com
+          default_author: github_actor
 
       - uses: softprops/action-gh-release@v2
         env:
