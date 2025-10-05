@@ -1,7 +1,7 @@
 {
   "name": "renuel",
   "description": "Build React UIs without JSX. Type-safe, composable, and 100% JavaScript/TypeScript.",
-  "version": "0.0.13-next.3",
+  "version": "0.0.13-next.4",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/renueljs/renuel.git"
