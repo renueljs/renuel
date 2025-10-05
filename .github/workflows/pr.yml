@@ -1,0 +1,22 @@
+name: pr
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  title:
+    runs-on: ubuntu-latest
+    steps:
+      - if: github.event.pull_request.base.ref == 'next'
+        uses: deepakputhraya/action-pr-title@v1.0.2
+        with:
+          allowed_prefixes: "fix:,feat:,BREAKING CHANGE:,misc:"
+          prefix_case_sensitive: true
+          regex: "^[A-Za-z\\s]+: \\S.*$"
+          github_token: ${{ github.token }}
+      - if: github.event.pull_request.base.ref == 'master'
+        uses: deepakputhraya/action-pr-title@v1.0.2
+        with:
+          regex: "^misc: release$"
+          github_token: ${{ github.token }}
