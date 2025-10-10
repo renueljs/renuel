@@ -69,7 +69,7 @@ jobs:
           prerelease: ${{ github.event.workflow_run.head_branch == 'next' }}
           body: ${{ steps.version.outputs.RELEASE_BODY }}
 
-      - run: node scripts/readme.ts --repo ${{ github.repository }} > README.md
+      - run: node scripts/readme.ts --repo ${{ github.repository }}
 
       - if: github.event.workflow_run.head_branch == 'master'
         run: npm publish
