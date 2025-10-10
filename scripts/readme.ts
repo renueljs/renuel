@@ -56,7 +56,7 @@ async function main() {
 
         const resolved = new URL(
           src,
-          `https://github.com/${repo}/raw/${branch}`,
+          `https://github.com/${repo}/raw/${branch}/`,
         )
           .toString()
           .replace(/#gh-light-mode-only/g, "");
