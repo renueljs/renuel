@@ -83,7 +83,7 @@ async function main() {
       readme,
     );
 
-  process.stdout.write(readme + "\n");
+  await fs.writeFile("./README.md", readme, "utf8");
 }
 
 main().catch(e => {

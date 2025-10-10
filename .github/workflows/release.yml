@@ -71,8 +71,6 @@ jobs:
 
       - run: node scripts/readme.ts --repo ${{ github.repository }} > README.md
 
-      - uses: mxschmitt/action-tmate@v3
-
       - if: github.event.workflow_run.head_branch == 'master'
         run: npm publish
 
