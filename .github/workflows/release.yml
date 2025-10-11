@@ -22,11 +22,17 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
+      - id: app_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.workflow_run.head_branch }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app_token.outputs.token }}
 
       - uses: actions/setup-node@v4
         with:
@@ -50,18 +56,30 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: package.json package-lock.json
-          message: "misc: release v${{ steps.version.outputs.NEW_VERSION }}"
-          author_name: GitHub Actions
-          author_email: 41898282+github-actions[bot]@users.noreply.github.com
+          message: "misc: release v${{ steps.version.outputs.NEW_VERSION }} [no ci]"
+          committer_name: Renuel Release Bot
+          committer_email: 2068216+Renuel-Release-Bot[bot]@users.noreply.github.com
 
       - uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
         with:
           tag_name: v${{ steps.version.outputs.NEW_VERSION }}
           target_commitish: ${{ github.event.workflow_run.head_branch }}
           prerelease: ${{ github.event.workflow_run.head_branch == 'next' }}
           body: ${{ steps.version.outputs.RELEASE_BODY }}
+
+      - if: github.event.workflow_run.head_branch == 'master'
+        uses: morbalint/git-merge-action@v1
+        with:
+          source: master
+          target: next
+          strategy_options: "ours"
+          user_name: Renuel Release Bot
+          user_email: 2068216+Renuel-Release-Bot[bot]@users.noreply.github.com
+          token: ${{ steps.app_token.outputs.token }}
+
+      - run: node scripts/readme.ts --repo ${{ github.repository }}
 
       - if: github.event.workflow_run.head_branch == 'master'
         run: npm publish
