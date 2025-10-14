@@ -1,0 +1,64 @@
+name: release_followup
+
+on:
+  repository_dispatch:
+    types: [released-latest]
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  after_latest:
+    runs-on: ubuntu-latest
+    steps:
+      - id: app_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+
+      - uses: morbalint/git-merge-action@v1
+        with:
+          source: master
+          target: next
+          strategy_options: "ours"
+          user_name: Renuel Release Bot
+          user_email: 2068216+Renuel-Release-Bot[bot]@users.noreply.github.com
+          token: ${{ steps.app_token.outputs.token }}
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: next
+          token: ${{ steps.app_token.outputs.token }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          registry-url: "https://registry.npmjs.org/"
+
+      - run: npm ci
+
+      - run: node scripts/readme.ts
+
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: README.md
+          message: "misc: readme badges [no ci]"
+          committer_name: Renuel Release Bot
+          committer_email: 2068216+Renuel-Release-Bot[bot]@users.noreply.github.com
+
+      - uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+          title: "misc: release latest"
+          body: |
+            This Pull Request is automatically managed and kept open indefinitely.
+
+            It proposes merging all new development from the **`next`** branch into **`master`**. Merge this PR when the next 'latest' stable release is ready.
+          base: master
+          branch: next
+          commit-message: "misc: automated release pr update"
+          committer: "Renuel Release Bot <2068216+Renuel-Release-Bot[bot]@users.noreply.github.com>"
