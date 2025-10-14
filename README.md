@@ -1,6 +1,6 @@
 <p align="center" id="logos">
-  <img alt="Renuel" src=".github/logo-dark.png#gh-dark-mode-only" height="384" style="max-width: 100%;">
   <img alt="Renuel" src=".github/logo-light.png#gh-light-mode-only" height="384" style="max-width: 100%;">
+  <img alt="Renuel" src=".github/logo-dark.png#gh-dark-mode-only" height="384" style="max-width: 100%;">
 </p>
 
 <p align="center" id="badges">
