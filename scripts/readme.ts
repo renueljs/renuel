@@ -15,75 +15,88 @@ async function run(cmd: string) {
   }
 }
 
-async function getBranch() {
-  const branch = await run("git rev-parse --abbrev-ref HEAD");
-  return branch?.trim();
-}
+const logos = (branch: string, npm: boolean): string[] =>
+  npm
+    ? [
+        `https://github.com/renueljs/renuel/raw/${branch}/.github/logo-light.png`,
+      ]
+    : [
+        ".github/logo-light.png#gh-light-mode-only",
+        ".github/logo-dark.png#gh-dark-mode-only",
+      ];
+
+const badges = (
+  gitBranch: string,
+): { alt: string; src: string; href: string }[] => {
+  const branch = gitBranch === "master" ? "master" : "next",
+    tag = branch === "master" ? "latest" : "next",
+    color = branch === "master" ? "blue" : "orange";
+  return [
+    {
+      alt: `${branch} branch`,
+      src: `https://img.shields.io/badge/branch-${branch}-${color}`,
+      href: `https://github.com/renueljs/renuel/tree/${branch}`,
+    },
+    {
+      alt: `${branch} build status`,
+      src: `https://img.shields.io/github/actions/workflow/status/renueljs/renuel/ci.yml?branch=${branch}&color=${color}`,
+      href: `https://github.com/renueljs/renuel/actions/workflows/ci.yml?query=branch%3A${branch}`,
+    },
+    {
+      alt: `npm ${tag} version`,
+      src: `https://img.shields.io/npm/v/renuel/${tag}.svg?label=npm&color=${color}`,
+      href: `https://www.npmjs.com/package/renuel/v/${tag}`,
+    },
+    {
+      alt: `npm ${tag} version bundle size`,
+      src: `https://img.shields.io/bundlephobia/minzip/renuel@${tag}?label=bundle%20size&color=${color}`,
+      href: `https://bundlephobia.com/package/renuel@${tag}`,
+    },
+    {
+      alt: `github ${branch} branch license`,
+      src: `https://img.shields.io/github/license/renueljs/renuel?color=${color}`,
+      href: `https://github.com/renueljs/renuel/blob/${branch}/LICENSE`,
+    },
+  ];
+};
 
 async function main() {
-  const repo = process.argv.reduce(
-    (acc, arg) => (acc === "" ? arg : arg === "--repo" ? "" : acc),
-    null as string | null,
-  );
+  const branch = (await run("git rev-parse --abbrev-ref HEAD"))?.trim();
 
-  if (
-    !repo ||
-    !/^([a-z0-9](?:-?[a-z0-9]){0,38})\/([a-z0-9](?:-?[a-z0-9]){0,38})$/.test(
-      repo,
-    )
-  ) {
-    throw new Error(
-      "Must pass --repo argument with valid GitHub repository in the format <owner>/<repo>.",
-    );
+  if (!branch) {
+    throw new Error("Failed to get current branch. Exiting.");
   }
-
-  const branch = await getBranch();
 
   let readme = await fs.readFile("./README.md", "utf8");
 
-  readme = Array.from(readme.matchAll(/<img[^>]+alt="Renuel"([\S\s]*?)>/gm))
-    .sort(({ index: a }, { index: b }) => (a < b ? 1 : a > b ? -1 : 0))
-    .reduce((readme, match) => {
-      const before = readme.substring(0, match.index);
-      const after = readme.substring(match.index + match[0].length);
+  readme = readme.replace(
+    /<p[^>]+id="logos"[^>]*>([\S\s]*?)<\/p>/m,
+    `<p align="center" id="logos">${logos(
+      branch,
+      process.argv.includes("--npm"),
+    )
+      .map(
+        src =>
+          `\n  <img alt="Renuel" src="${src}" height="384" style="max-width: 100%;">`,
+      )
+      .join("")}\n</p>`,
+  );
 
-      if (match[0].includes("#gh-light-mode-only")) {
-        const src = (match[1].match(/src="([^"]+)"/) || [])[1];
+  readme = readme.replace(
+    /<p[^>]+id="badges"[^>]*>([\S\s]*?)<\/p>/m,
+    `<p align="center" id="badges">${badges(branch)
+      .map(
+        ({ alt, src, href }) =>
+          `\n  <a href="${href}">\n    <img src="${src}" alt="${alt}">\n  </a>`,
+      )
+      .join("")}\n</p>`,
+  );
 
-        if (!src) {
-          return before + after;
-        }
-
-        const resolved = new URL(
-          src,
-          `https://github.com/${repo}/raw/${branch}/`,
-        )
-          .toString()
-          .replace(/#gh-light-mode-only/g, "");
-
-        return before + match[0].replace(src, resolved) + after;
-      }
-
-      return before + after;
-    }, readme);
-
-  readme = Array.from(
-    readme.matchAll(
-      new RegExp(
-        `<!-- omit from ${branch} -->([\\S\\s]*?)<!-- \\/omit from ${branch} -->`,
-        "gm",
-      ),
-    ),
-  )
-    .sort(({ index: a }, { index: b }) => (a < b ? 1 : a > b ? -1 : 0))
-    .reduce(
-      (readme, match) =>
-        readme.substring(0, match.index) +
-        readme.substring(match.index + match[0].length),
-      readme,
-    );
-
-  await fs.writeFile("./README.md", readme, "utf8");
+  if (process.argv.includes("--dry-run")) {
+    console.log(readme);
+  } else {
+    return await fs.writeFile("./README.md", readme, "utf8");
+  }
 }
 
 main().catch(e => {

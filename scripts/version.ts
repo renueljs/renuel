@@ -58,7 +58,7 @@ async function getCommits(sinceRef?: string) {
       const message = lines.join("\n").trim();
       return { sha, message };
     })
-    .filter(x => !x.message.startsWith("misc: release"));
+    .filter(x => !x.message.startsWith("misc: release latest"));
 }
 
 function getBumpType<
