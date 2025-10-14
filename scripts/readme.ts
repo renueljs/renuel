@@ -87,7 +87,7 @@ async function main() {
     `<p align="center" id="badges">${badges(branch)
       .map(
         ({ alt, src, href }) =>
-          `\n  <a href="${href}">\n    <img src="${src}" alt="${alt}">\n  </a>`,
+          `\n  <a href="${href}"><img src="${src}" alt="${alt}"></a>`,
       )
       .join("")}\n</p>`,
   );
