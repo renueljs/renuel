@@ -1,7 +1,7 @@
 {
   "name": "renuel",
   "description": "Build React UIs without JSX. Type-safe, composable, and 100% JavaScript/TypeScript.",
-  "version": "0.0.15",
+  "version": "0.0.16-next.0",
   "license": "MIT",
   "repository": {
     "type": "git",
