@@ -4,11 +4,11 @@
 </p>
 
 <p align="center" id="badges">
-  <a href="https://github.com/renueljs/renuel/tree/master"><img src="https://img.shields.io/badge/branch-master-blue" alt="master branch"></a>
-  <a href="https://github.com/renueljs/renuel/actions/workflows/ci.yml?query=branch%3Amaster"><img src="https://img.shields.io/github/actions/workflow/status/renueljs/renuel/ci.yml?branch=master&color=blue" alt="master build status"></a>
-  <a href="https://www.npmjs.com/package/renuel/v/latest"><img src="https://img.shields.io/npm/v/renuel/latest.svg?label=npm&color=blue" alt="npm latest version"></a>
-  <a href="https://bundlephobia.com/package/renuel@latest"><img src="https://img.shields.io/bundlephobia/minzip/renuel@latest?label=bundle%20size&color=blue" alt="npm latest version bundle size"></a>
-  <a href="https://github.com/renueljs/renuel/blob/master/LICENSE"><img src="https://img.shields.io/github/license/renueljs/renuel?color=blue" alt="github master branch license"></a>
+  <a href="https://github.com/renueljs/renuel/tree/next"><img src="https://img.shields.io/badge/branch-next-orange" alt="next branch"></a>
+  <a href="https://github.com/renueljs/renuel/actions/workflows/ci.yml?query=branch%3Anext"><img src="https://img.shields.io/github/actions/workflow/status/renueljs/renuel/ci.yml?branch=next&color=orange" alt="next build status"></a>
+  <a href="https://www.npmjs.com/package/renuel/v/next"><img src="https://img.shields.io/npm/v/renuel/next.svg?label=npm&color=orange" alt="npm next version"></a>
+  <a href="https://bundlephobia.com/package/renuel@next"><img src="https://img.shields.io/bundlephobia/minzip/renuel@next?label=bundle%20size&color=orange" alt="npm next version bundle size"></a>
+  <a href="https://github.com/renueljs/renuel/blob/next/LICENSE"><img src="https://img.shields.io/github/license/renueljs/renuel?color=orange" alt="github next branch license"></a>
 </p>
 
 <hr>
