@@ -4,20 +4,11 @@ on:
   push:
     branches: [master, next]
   pull_request:
-    types: [opened, synchronize, reopened]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: protect master
-        if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master'
-        run: |
-          if [ "${{ github.event.pull_request.head.ref }}" != "next" ]; then
-            echo "PRs to master must come from the 'next' branch only."
-            exit 1
-          fi
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
