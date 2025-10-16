@@ -83,4 +83,5 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+      - run: npm ci
       - run: node ./scripts/version.ts
