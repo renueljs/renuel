@@ -2,7 +2,6 @@ name: pr
 
 on:
   pull_request:
-    types: [opened, edited, synchronize, reopened]
 
 jobs:
   title:
@@ -20,3 +19,68 @@ jobs:
         with:
           regex: "^misc: release latest$"
           github_token: ${{ github.token }}
+
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: master
+        if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master'
+        run: |
+          if [ "${{ github.event.pull_request.head.ref }}" != "next" ]; then
+            echo "PRs to master must come from the 'next' branch only."
+            exit 1
+          fi
+
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wagoid/commitlint-github-action@v6
+        with:
+          configFile: .commitlintrc.json
+
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx prettier -c "**/*.{json,md,yml}"
+
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx eslint . --max-warnings=0
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  releasable:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.base.ref == 'master'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: node ./scripts/version.ts

@@ -38,11 +38,6 @@ const badges = (
       href: `https://github.com/renueljs/renuel/tree/${branch}`,
     },
     {
-      alt: `${branch} build status`,
-      src: `https://img.shields.io/github/actions/workflow/status/renueljs/renuel/ci.yml?branch=${branch}&color=${color}`,
-      href: `https://github.com/renueljs/renuel/actions/workflows/ci.yml?query=branch%3A${branch}`,
-    },
-    {
       alt: `npm ${tag} version`,
       src: `https://img.shields.io/npm/v/renuel/${tag}.svg?label=npm&color=${color}`,
       href: `https://www.npmjs.com/package/renuel/v/${tag}`,
