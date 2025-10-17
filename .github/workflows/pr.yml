@@ -3,6 +3,11 @@ name: pr
 on:
   pull_request:
 
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
 jobs:
   title:
     runs-on: ubuntu-latest
