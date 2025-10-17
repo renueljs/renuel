@@ -22,11 +22,6 @@ async function run(cmd: string) {
   }
 }
 
-async function getBranch() {
-  const branch = await run("git rev-parse --abbrev-ref HEAD");
-  return branch?.trim();
-}
-
 async function getTags() {
   const list = await run("git tag --list 'v[0-9]*.[0-9]*.[0-9]*'");
   return list
@@ -83,7 +78,7 @@ function getBumpType<
 }
 
 async function main() {
-  const branch = await getBranch();
+  const branch = process.argv[2];
 
   if (branch !== "master" && branch !== "next") {
     throw new Error(
