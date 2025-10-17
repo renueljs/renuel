@@ -84,4 +84,4 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: node ./scripts/version.ts
+      - run: node ./scripts/version.ts ${{ github.event.pull_request.base.ref }}
