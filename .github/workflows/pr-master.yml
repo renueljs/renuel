@@ -2,6 +2,11 @@ name: pr master
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - edited
+      - reopened
     branches:
       - master
 
