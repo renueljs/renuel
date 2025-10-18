@@ -1,40 +1,20 @@
-name: pr
+name: pr next
 
 on:
   pull_request:
-
-permissions:
-  contents: read
-  checks: write
-  pull-requests: write
+    branches:
+      - next
 
 jobs:
   title:
     runs-on: ubuntu-latest
     steps:
-      - if: github.event.pull_request.base.ref == 'next'
-        uses: deepakputhraya/action-pr-title@v1.0.2
+      - uses: deepakputhraya/action-pr-title@v1.0.2
         with:
           allowed_prefixes: "fix:,feat:,BREAKING CHANGE:,misc:"
           prefix_case_sensitive: true
           regex: "^[A-Za-z\\s]+: \\S.*$"
           github_token: ${{ github.token }}
-      - if: github.event.pull_request.base.ref == 'master'
-        uses: deepakputhraya/action-pr-title@v1.0.2
-        with:
-          regex: "^misc: release latest$"
-          github_token: ${{ github.token }}
-
-  source:
-    runs-on: ubuntu-latest
-    steps:
-      - name: master
-        if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master'
-        run: |
-          if [ "${{ github.event.pull_request.head.ref }}" != "next" ]; then
-            echo "PRs to master must come from the 'next' branch only."
-            exit 1
-          fi
 
   commitlint:
     runs-on: ubuntu-latest
@@ -76,17 +56,3 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-
-  releasable:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.base.ref == 'master'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
-      - run: node ./scripts/version.ts ${{ github.event.pull_request.base.ref }}
