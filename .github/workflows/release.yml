@@ -9,6 +9,10 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    if: >
+      !startsWith(github.event.head_commit.message, 'misc: release v') &&
+      github.event.head_commit.message != 'misc: readme badges' &&
+      github.event.head_commit.message != 'merge master into next'
     steps:
       - id: app_token
         uses: actions/create-github-app-token@v1
@@ -43,7 +47,7 @@ jobs:
       - uses: EndBug/add-and-commit@v9
         with:
           add: package.json package-lock.json README.md
-          message: "misc: release v${{ steps.version.outputs.NEW_VERSION }} [no ci]"
+          message: "misc: release v${{ steps.version.outputs.NEW_VERSION }}"
           committer_name: Renuel Release Bot
           committer_email: 2068216+Renuel-Release-Bot[bot]@users.noreply.github.com
 
@@ -101,7 +105,7 @@ jobs:
       - uses: EndBug/add-and-commit@v9
         with:
           add: README.md
-          message: "misc: readme badges [no ci]"
+          message: "misc: readme badges"
           committer_name: Renuel Release Bot
           committer_email: 2068216+Renuel-Release-Bot[bot]@users.noreply.github.com
 
