@@ -1,0 +1,38 @@
+name: pr master
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: deepakputhraya/action-pr-title@v1.0.2
+        with:
+          regex: "^misc: release latest$"
+          github_token: ${{ github.token }}
+
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check
+        run: |
+          if [ "${{ github.event.pull_request.head.ref }}" != "next" ]; then
+            echo "PRs to master must come from the 'next' branch only."
+            exit 1
+          fi
+
+  releasable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: node ./scripts/version.ts ${{ github.event.pull_request.base.ref }}
