@@ -1,4 +1,4 @@
-name: pr master
+name: latest
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
       - edited
       - reopened
     branches:
-      - master
+      - latest
 
 permissions:
   contents: read
@@ -29,7 +29,7 @@ jobs:
       - name: check
         run: |
           if [ "${{ github.event.pull_request.head.ref }}" != "next" ]; then
-            echo "PRs to master must come from the 'next' branch only."
+            echo "PRs to the 'latest' branch must come from the 'next' branch."
             exit 1
           fi
 

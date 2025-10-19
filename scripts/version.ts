@@ -80,9 +80,9 @@ function getBumpType<
 async function main() {
   const branch = process.argv[2];
 
-  if (branch !== "master" && branch !== "next") {
+  if (branch !== "latest" && branch !== "next") {
     throw new Error(
-      `Current branch \`${branch}\` does not match \`next\` or \`master\`. Exiting.`,
+      `Current branch \`${branch}\` does not match \`next\` or \`latest\`. Exiting.`,
     );
   }
 
@@ -106,7 +106,7 @@ async function main() {
 
   let nextVersion: string | null = null;
 
-  if (branch === "master") {
+  if (branch === "latest") {
     const bumpType = getBumpType(
       commitsSinceLatest.map(c => c.message),
       "major",
