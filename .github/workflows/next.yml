@@ -1,4 +1,4 @@
-name: pr next
+name: next
 
 on:
   pull_request:
