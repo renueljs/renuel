@@ -28,14 +28,13 @@ const logos = (branch: string, npm: boolean): string[] =>
 const badges = (
   gitBranch: string,
 ): { alt: string; src: string; href: string }[] => {
-  const branch = gitBranch === "master" ? "master" : "next",
-    tag = branch === "master" ? "latest" : "next",
-    color = branch === "master" ? "blue" : "orange";
+  const tag = gitBranch === "latest" ? "latest" : "next",
+    color = tag === "latest" ? "blue" : "orange";
   return [
     {
-      alt: `${branch} branch`,
-      src: `https://img.shields.io/badge/branch-${branch}-${color}`,
-      href: `https://github.com/renueljs/renuel/tree/${branch}`,
+      alt: `${tag} branch`,
+      src: `https://img.shields.io/badge/branch-${tag}-${color}`,
+      href: `https://github.com/renueljs/renuel/tree/${tag}`,
     },
     {
       alt: `npm ${tag} version`,
@@ -48,9 +47,9 @@ const badges = (
       href: `https://bundlephobia.com/package/renuel@${tag}`,
     },
     {
-      alt: `github ${branch} branch license`,
+      alt: `github ${tag} branch license`,
       src: `https://img.shields.io/github/license/renueljs/renuel?color=${color}`,
-      href: `https://github.com/renueljs/renuel/blob/${branch}/LICENSE`,
+      href: `https://github.com/renueljs/renuel/blob/${tag}/LICENSE`,
     },
   ];
 };

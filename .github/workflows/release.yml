@@ -3,7 +3,7 @@ name: release
 on:
   push:
     branches:
-      - master
+      - latest
       - next
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
     if: >
       !startsWith(github.event.head_commit.message, 'misc: release v') &&
       github.event.head_commit.message != 'misc: readme badges' &&
-      github.event.head_commit.message != 'merge master into next'
+      github.event.head_commit.message != 'merge latest into next'
     steps:
       - id: app_token
         uses: actions/create-github-app-token@v1
@@ -62,7 +62,7 @@ jobs:
 
       - run: node scripts/readme.ts --npm
 
-      - if: github.ref_name == 'master'
+      - if: github.ref_name == 'latest'
         run: npm publish
 
       - if: github.ref_name == 'next'
@@ -70,7 +70,7 @@ jobs:
 
   cleanup:
     runs-on: ubuntu-latest
-    if: github.ref_name == 'master'
+    if: github.ref_name == 'latest'
     needs: publish
     steps:
       - id: app_token
@@ -81,7 +81,7 @@ jobs:
 
       - uses: morbalint/git-merge-action@v1
         with:
-          source: master
+          source: latest
           target: next
           strategy_options: "ours"
           user_name: Renuel Release Bot
@@ -112,11 +112,11 @@ jobs:
       - name: pr
         run: |
           PR_TITLE="misc: release latest"
-          PR_BODY="This Pull Request is automatically managed and kept open indefinitely. It proposes merging all new development from the **\`next\`** branch into **\`master\`**. Merge this PR when the next 'latest' stable release is ready."
+          PR_BODY="This pull request is automatically managed and kept open indefinitely. It proposes merging all new development from the **\`next\`** branch into **\`latest\`**. Merge this PR when the next \"latest\" stable release is ready."
           gh pr create \
             --title "$PR_TITLE" \
             --body "$PR_BODY" \
-            --base master \
+            --base latest \
             --head next \
             --repo ${{ github.repository }}
         env:
