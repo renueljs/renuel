@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       !startsWith(github.event.head_commit.message, 'misc: release v') &&
-      github.event.head_commit.message != 'misc: readme badges' &&
+      github.event.head_commit.message != 'misc: readme updates' &&
       github.event.head_commit.message != 'merge latest into next'
     steps:
       - id: app_token
@@ -42,7 +42,7 @@ jobs:
 
       - run: npm version --no-git-tag-version "${{steps.version.outputs.NEW_VERSION}}"
 
-      - run: node scripts/readme.ts
+      - run: node scripts/readme.ts --ref v${{ steps.version.outputs.NEW_VERSION }}
 
       - uses: EndBug/add-and-commit@v9
         with:
@@ -60,7 +60,7 @@ jobs:
           prerelease: ${{ github.ref_name == 'next' }}
           body: ${{ steps.version.outputs.RELEASE_BODY }}
 
-      - run: node scripts/readme.ts --npm
+      - run: node scripts/readme.ts --ref v${{ steps.version.outputs.NEW_VERSION }} --npm
 
       - if: github.ref_name == 'latest'
         run: npm publish
@@ -100,12 +100,12 @@ jobs:
 
       - run: npm ci
 
-      - run: node scripts/readme.ts
+      - run: node scripts/readme.ts --ref next
 
       - uses: EndBug/add-and-commit@v9
         with:
           add: README.md
-          message: "misc: readme badges"
+          message: "misc: readme updates"
           committer_name: Renuel Release Bot
           committer_email: 2068216+Renuel-Release-Bot[bot]@users.noreply.github.com
 

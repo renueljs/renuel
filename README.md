@@ -4,10 +4,10 @@
 </p>
 
 <p align="center" id="badges">
-  <a href="https://github.com/renueljs/renuel/tree/latest"><img src="https://img.shields.io/badge/branch-latest-blue" alt="latest branch"></a>
-  <a href="https://www.npmjs.com/package/renuel/v/latest"><img src="https://img.shields.io/npm/v/renuel/latest.svg?label=npm&color=blue" alt="npm latest version"></a>
-  <a href="https://bundlephobia.com/package/renuel@latest"><img src="https://img.shields.io/bundlephobia/minzip/renuel@latest?label=bundle%20size&color=blue" alt="npm latest version bundle size"></a>
-  <a href="https://github.com/renueljs/renuel/blob/latest/LICENSE"><img src="https://img.shields.io/github/license/renueljs/renuel?color=blue" alt="github latest branch license"></a>
+  <a href="https://github.com/renueljs/renuel/tree/v0.0.20-next.2"><img src="https://img.shields.io/badge/tag-v0.0.20--next.2-orange" alt="tag v0.0.20-next.2"></a>
+  <a href="https://www.npmjs.com/package/renuel/v/0.0.20-next.2"><img src="https://img.shields.io/badge/npm-v0.0.20--next.2-orange" alt="npm version"></a>
+  <a href="https://bundlephobia.com/package/renuel@v0.0.20-next.2"><img src="https://img.shields.io/bundlephobia/minzip/renuel@v0.0.20-next.2?label=bundle%20size&color=orange" alt="npm v0.0.20-next.2 version bundle size"></a>
+  <a href="https://github.com/renueljs/renuel/blob/v0.0.20-next.2/LICENSE"><img src="https://img.shields.io/badge/license-MIT-orange" alt="license"></a>
 </p>
 
 <hr>
@@ -38,33 +38,32 @@ npm install renuel # or yarn, pnpm, etc.
 
 ## Quick start
 
-Here's a simple example of using Renuel to render a greeting:
+Here's an example of using Renuel to create a simple counter app:
 
 <!--prettier-ignore-start-->
+<!--demo-start-->
 ```typescript
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { div, em$ } from "renuel";
+import { useReducer } from "react";
+import { createRoot } from "react-dom/client";
+import { button, component, strong$ } from "renuel";
 
-const App = () =>
-  div({ className: "greeting" }, "Hello ", em$("world"));
+const { App$ } = component("App", () => {
+  const [count, onClick] = useReducer((x) => x + 1, 0);
+  return button({ onClick }, "Count: ", strong$(count));
+});
 
 const rootEl = document.getElementById("root");
 if (rootEl) {
-  const root = ReactDOM.createRoot(rootEl);
-  root.render(App());
+  const root = createRoot(rootEl);
+  root.render(App$());
 }
-```
-<!--prettier-ignore-end-->
 
-This renders:
 
-<!--prettier-ignore-start-->
-```html
-<div class="greeting">
-  Hello <em>world</em>
-</div>
+
 ```
+
+[![Edit in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/api/v1/sandboxes/define?parameters=N4IgZglgNgpgziAXKAhgBzQOgBYBcC2USoAxgPYB2uMVSIAPAIQAmZJuAnmjAAR6EA%2BADoV6%2FKMIo8eYmCmaTp0%2Bvhi4UPEthQAnOGoC8QkAFUAKgDEAtAA5jPAPSKlKtRoopVRkADcIMAHc0Mh1ce3IqGlxvAIhmXGwDZhg%2FEhgrWPjsABoeCAoIXAgUKCs4EhKYAwBGTAAGeycRJRki3FgBACUaAFcYKB4AERh8MnoHNo7mmQdsOQVp%2BgAjMmYOZ2VmCB885m8dMjIwkAFxrZ8NmXKdCDRcHk5ub1HmHth7OB0Sb0wHfBR8phcHBjKcHNdbrhnOMVmtJONxJIQABfbIgNAoEgAaxQAHMYJgAFZwSjEEARai0RAgYDTYweVTGRA8Yw6Xr9KzJUbGbJ03wwPQQShMlkgWp1eo8vnJCF3IUUEXGboUPoDLlkHhoA6EmDsKVSUX%2FfKKkDoLDifXSYyy4Ei2kGq0gODqUImjFffo8M04AhQYzTVHSmDcCjJCgkfwgpA8e0tYwAAUe8AcbMxx2ZxmqAE5MAAmPOWpQJpNwFNydicsj4E3ZvMFkC8h2i1N66OZnP5hoN6aOlu4SvVttijuS7tN4zutJ%2Bof56oANlHjbjIDZKv6JolEtzdSsFBgAA9cPWl0WQCWSDc7iaAKyYHMAZn9BuRImRKLRwIikFxRJJFDJFJRHQsaiuQ%2BBoNAAoAPJypQUbMiBjouvi6aigAogAytu26Fo6PT6MMkB7hYIQAMJQCgcBwBY%2FhQMw8EPDofQno6LxvDAJqYQAcgexwsaKUAQEsIoANo9qemHYV2%2FGOoMUEALK4aecnyZgACS1A6CgSzvCA4kALr8daWK3AAMkJpFzNiIq4ExMBGSAbGwN0JJQD0RTCkOSw9KGsA6EpxglFAZABGp4EhEUFC4mYcBoYeNBwPKDG2cx4msvAZBQD4MAAFJ%2FvJqzsTZdkORArkoNQzAFa8sDJSVaUgBQZBofghTFal45OrZECtsyKX2Q1TUmCq%2BjMKZbAlHVHXLkNI0wMwAAKuieGoApTQNnVNRYQUJAcPS4tgpGUfAakUBhsS4Fo7Ucc%2BJ7GPkJBuckokNUaFBAlG0z6a%2B76OQC73AgBlCUrgdAQOFoQxjw%2BEwN0rxpDoPDIjwYAHPgzblscADcIjg8EkPAJoqbUJ0hz3MjqNVhjaYDg4j3%2BFQxg4wUEP3IT3m4LglC5GBwR7lQuTOgcUUACRIyjaMY2u07MyIETOlDACCGBi8jBiaFWfNRAAFMYytoDyPDawAlDwBgCDG0zy%2FcInkD5uC5JQ5E9Vi%2Blm9D%2Bhwz0CPa9r%2B6m%2BbPD7jwADUPDVLkdTG8z0hsrgPQ6FIHNcxQ2uE07gnYkjuTGKRZD2xmDY8ELlC4iL2t21QxvR6%2BNcKuGcH3AcRxoQM6usCQPSqFQmAoa3IxRAAQhwanMLrK5k8YdcQGARvN7gremyB1s8PP7sXnIJNk9r8%2BLzHq9k5gq7JDo2v6%2BX1fM2%2ByI30AA)
+<!--demo-end-->
 <!--prettier-ignore-end-->
 
 ## Custom components
