@@ -64,15 +64,13 @@ const replaceBadges = ({ ref }: { ref: string }) => {
 
   const published = refType === "branch" || refType === "tag";
 
-  const encodeBadgeValue = (value: string) => value.replace(/-/g, "--");
-
   return (readme: string) =>
     readme.replace(
       /<p[^>]+id="badges"[^>]*>([\S\s]*?)<\/p>/m,
       `<p align="center" id="badges">${[
         {
           alt: `${refType} ${ref}`,
-          src: `https://img.shields.io/badge/${refType}-${encodeBadgeValue(ref)}-${color}`,
+          src: `https://img.shields.io/badge/${refType}-${ref.replace(/-/g, "--")}-${color}`,
           href: `https://github.com/renueljs/renuel/tree/${ref}`,
         },
         ...(published
@@ -81,13 +79,13 @@ const replaceBadges = ({ ref }: { ref: string }) => {
                 alt: "npm version",
                 src:
                   refType === "branch"
-                    ? `https://img.shields.io/npm/v/renuel/${encodeBadgeValue(ref)}.svg?label=npm&color=${color}`
-                    : `https://img.shields.io/badge/npm-${encodeBadgeValue(ref)}-${color}`,
+                    ? `https://img.shields.io/npm/v/renuel/${ref}.svg?label=npm&color=${color}`
+                    : `https://img.shields.io/badge/npm-${ref.replace(/-/g, "--")}-${color}`,
                 href: `https://www.npmjs.com/package/renuel/v/${ref.replace(/^v/, "")}`,
               },
               {
                 alt: `npm ${ref} version bundle size`,
-                src: `https://img.shields.io/bundlephobia/minzip/renuel@${encodeBadgeValue(ref)}?label=bundle%20size&color=${color}`,
+                src: `https://img.shields.io/bundlephobia/minzip/renuel@${ref}?label=bundle%20size&color=${color}`,
                 href: `https://bundlephobia.com/package/renuel@${ref}`,
               },
             ]
