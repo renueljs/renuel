@@ -38,33 +38,27 @@ npm install renuel # or yarn, pnpm, etc.
 
 ## Quick start
 
-Here's a simple example of using Renuel to render a greeting:
+Here's an example of using Renuel to create a simple counter app:
 
 <!--prettier-ignore-start-->
+<!--demo-start-->
 ```typescript
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { div, em$ } from "renuel";
+import { useReducer } from "react";
+import { createRoot } from "react-dom/client";
+import { button, component, strong$ } from "renuel";
 
-const App = () =>
-  div({ className: "greeting" }, "Hello ", em$("world"));
+const { App$ } = component("App", () => {
+  const [count, onClick] = useReducer((x) => x + 1, 0);
+  return button({ onClick }, "Count: ", strong$(count));
+});
 
 const rootEl = document.getElementById("root");
 if (rootEl) {
-  const root = ReactDOM.createRoot(rootEl);
-  root.render(App());
+  const root = createRoot(rootEl);
+  root.render(App$());
 }
 ```
-<!--prettier-ignore-end-->
-
-This renders:
-
-<!--prettier-ignore-start-->
-```html
-<div class="greeting">
-  Hello <em>world</em>
-</div>
-```
+<!--demo-end-->
 <!--prettier-ignore-end-->
 
 ## Custom components
