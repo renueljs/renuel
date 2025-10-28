@@ -193,7 +193,7 @@ const addSandboxButtons =
           `[![Edit in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](${x})`,
       );
 
-      const updatedSection = `<!--demo-start-->\n\`\`\`typescript${code}\n\`\`\`\n\n${badge}\n<!--demo-end-->`;
+      const updatedSection = `<!--demo-start-->\n\`\`\`typescript${code}\`\`\`\n\n${badge}\n<!--demo-end-->`;
 
       return `${readme.substring(0, sectionIndex)}${updatedSection}${readme.substring(sectionIndex + section.length)}`;
     }, readme);
