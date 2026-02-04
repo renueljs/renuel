@@ -4,7 +4,7 @@ import semver from "semver";
 import { text } from "stream/consumers";
 
 const commitPrefixes = {
-  breakingChange: "BREAKING CHANGE:",
+  breakingChange: "breaking:",
   feat: "feat:",
   fix: "fix:",
 };

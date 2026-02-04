@@ -63,10 +63,10 @@ jobs:
       - run: node scripts/readme.ts --ref v${{ steps.version.outputs.NEW_VERSION }} --npm
 
       - if: github.ref_name == 'latest'
-        run: npm publish
+        run: npm publish --provenance
 
       - if: github.ref_name == 'next'
-        run: npm publish --tag next
+        run: npm publish --provenance --tag next
 
   cleanup:
     runs-on: ubuntu-latest
