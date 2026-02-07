@@ -80,26 +80,53 @@ type NoExcessProps<ExpectedProps, ActualProps> = ExpectedProps & {
 };
 
 /**
- * A standard element factory that accepts props and children
- * @typeParam Props - The type of props `ElementType` accepts
- * @typeParam ElementType - The type of element the factory produces
+ * Extracts component props from a React element type, including data attributes
+ * if applicable.
+ * @typeParam ElementType - The React element type from which to extract props
  */
-type StandardFactory<Props, ElementType extends React.ElementType> = <const P>(
-  props: NoExcessProps<AttributeProps<Props>, P>,
-  ...children: P extends { children: unknown } ? [] : ChildrenArgs<Props>
-) => React.ReactElement<Props, ElementType>;
+type ElementTypeProps<ElementType extends React.ElementType> =
+  React.ComponentProps<ElementType> & DataProps<ElementType>;
 
 /**
- * An element factory that accepts children
- * @typeParam Props - The type of props `ElementType` accepts
- * @typeParam ElementType - The type of element the factory produces
+ * Standard factory function type for element types. Creates functions that
+ * accept attribute props and children as separate arguments.
+ * @typeParam ElementTypes - Record of element types to create factories for
  */
-type SkipPropsFactory<Props, ElementType extends React.ElementType> =
-  AnyRequired<AttributeProps<Props>> extends false
-    ? (
-        ...children: ChildrenArgs<Props>
-      ) => React.ReactElement<Props, ElementType>
+type StandardFactories<ElementTypes> = {
+  [Name in keyof ElementTypes]: ElementTypes[Name] extends React.ElementType
+    ? ElementTypeProps<ElementTypes[Name]> extends infer Props
+      ? <P>(
+          props: NoExcessProps<AttributeProps<Props>, P>,
+          ...children: P extends { children: unknown }
+            ? []
+            : ChildrenArgs<Props>
+        ) => React.ReactElement<Props, ElementTypes[Name]>
+      : never
     : never;
+};
+
+/**
+ * Skip-props factory function type for element types with no required
+ * attributes (with $ suffix). Creates functions that accept only children as
+ * arguments.
+ * @typeParam ElementTypes - Record of element types to create skip-props
+ * factories for
+ */
+type SkipPropsFactories<ElementTypes> = {
+  [Name in keyof ElementTypes extends infer BaseName extends string
+    ? `${BaseName}$`
+    : never]: Name extends `${infer BaseName extends string & keyof ElementTypes}$`
+    ? ElementTypes[BaseName] extends React.ElementType
+      ? ElementTypeProps<ElementTypes[BaseName]> extends infer Props
+        ? AnyRequired<AttributeProps<Props>> extends false
+          ? (
+              ...children: ChildrenArgs<Props>
+            ) => React.ReactElement<Props, ElementTypes[BaseName]>
+          : never
+        : never
+      : never
+    : never;
+};
 
 /**
  * A curried function that accepts remaining props and returns a React element
@@ -116,84 +143,121 @@ type CurriedFinalFunction<Props, ElementType extends React.ElementType> =
       ) => React.ReactElement<Props, ElementType>;
 
 /**
- * A partial element factory that accepts props and children and returns a
- * curried function that accepts remaining props
- * @typeParam Props - The type of props `ElementType` accepts
- * @typeParam ElementType - The type of element the factory produces
+ * Partial factory function type for element types (with _ prefix). Creates
+ * functions that accept partial props and return a curried function for
+ * remaining props.
+ * @typeParam ElementTypes - Record of element types to create partial factories
+ * for
  */
-type PartialFactory<Props, ElementType extends React.ElementType> = <const P0>(
-  props: NoExcessProps<Partial<AttributeProps<Props>>, P0>,
-  ...children: ChildrenArgs<Props>
-) => SafeOmit<AttributeProps<Props>, keyof P0> extends infer P1
-  ? CurriedFinalFunction<P1, ElementType>
-  : never;
-
-/**
- * A partial element factory that accepts children and returns a curried
- * function that accepts props
- * @typeParam Props - The type of props `ElementType` accepts
- * @typeParam ElementType - The type of element the factory produces
- */
-type PartialSkipPropsFactory<Props, ElementType extends React.ElementType> = (
-  ...children: ChildrenArgs<Props>
-) => CurriedFinalFunction<AttributeProps<Props>, ElementType>;
-
-/**
- * Generates a set of element factories for a given `elementType`.
- * @param name - The name of the component or element type
- * @param elementType - The element type for which to produce factories
- * @returns An object containing standard, skip-props, partial, and
- * partial-skip-props factories
- */
-export const component = <
-  const Name extends string,
-  ElementType extends React.ElementType,
-  Props = React.ComponentProps<ElementType> & DataProps<ElementType>,
->(
-  name: Name,
-  elementType: ElementType,
-): RemoveNever<
-  Record<Name, StandardFactory<Props, ElementType>> &
-    Record<`${Name}$`, SkipPropsFactory<Props, ElementType>> &
-    Record<`_${Name}`, PartialFactory<Props, ElementType>> &
-    Record<`_${Name}$`, PartialSkipPropsFactory<Props, ElementType>>
-> => {
-  const standard = (
-    props: Parameters<typeof React.createElement>[1],
-    ...children: Parameters<typeof React.createElement>[2][]
-  ) => React.createElement(elementType, props, ...children);
-
-  const skipProps = (...children: Parameters<typeof standard>[1][]) =>
-    standard(null, ...children);
-
-  const partial =
-    (
-      p0: Parameters<typeof standard>[0],
-      ...children: Parameters<typeof standard>[1][]
-    ) =>
-    (p1: Parameters<typeof standard>[0]) =>
-      standard({ ...p0, ...p1 }, ...children);
-
-  const partialSkipProps =
-    (...children: Parameters<typeof standard>[1][]) =>
-    (props: Parameters<typeof standard>[0]) =>
-      standard(props, ...children);
-
-  return {
-    [name]: standard,
-    [`${name}$`]: skipProps,
-    [`_${name}`]: partial,
-    [`_${name}$`]: partialSkipProps,
-  } as ReturnType<typeof component<Name, ElementType, Props>>;
+type PartialFactories<ElementTypes> = {
+  [Name in keyof ElementTypes extends infer BaseName extends string
+    ? `_${BaseName}`
+    : never]: Name extends `_${infer BaseName extends string & keyof ElementTypes}`
+    ? ElementTypes[BaseName] extends React.ElementType
+      ? ElementTypeProps<ElementTypes[BaseName]> extends infer Props
+        ? <const P0>(
+            props: NoExcessProps<Partial<AttributeProps<Props>>, P0>,
+            ...children: ChildrenArgs<Props>
+          ) => SafeOmit<AttributeProps<Props>, keyof P0> extends infer P1
+            ? CurriedFinalFunction<P1, ElementTypes[BaseName]>
+            : never
+        : never
+      : never
+    : never;
 };
 
-/** Fragment factories */
-export const { Fragment, Fragment$ } = component("Fragment", React.Fragment);
+/**
+ * Partial skip-props factory function type for element types (with _$ suffix).
+ * Creates functions that accept children and return a curried function for
+ * props.
+ * @typeParam ElementTypes - Record of element types to create partial
+ * skip-props factories for
+ */
+type PartialSkipPropsFactories<ElementTypes> = {
+  [Name in keyof ElementTypes extends infer BaseName extends string
+    ? `_${BaseName}$`
+    : never]: Name extends `_${infer BaseName extends string & keyof ElementTypes}$`
+    ? ElementTypes[BaseName] extends React.ElementType
+      ? ElementTypeProps<ElementTypes[BaseName]> extends infer Props
+        ? (
+            ...children: ChildrenArgs<Props>
+          ) => CurriedFinalFunction<
+            AttributeProps<Props>,
+            ElementTypes[BaseName]
+          >
+        : never
+      : never
+    : never;
+};
+
+/**
+ * Creates factory functions for React elements and components. Generates four
+ * variants for each element type:
+ * - Standard: accepts props object and variadic children
+ * - Skip-props ($): accepts only children, no props
+ * - Partial (_): accepts partial props and returns a curried function
+ * - Partial skip-props (_$): accepts children and returns a curried function for props
+ * @typeParam ElementTypes - Record mapping factory names to React element types
+ * @param elementTypes - Object containing the element types to create factories
+ * for
+ * @returns Factory object with standard, skip-props, partial, and partial
+ * skip-props variants
+ */
+export const factories = <
+  ElementTypes extends Record<string, React.ElementType>,
+>(
+  elementTypes: ElementTypes,
+) => {
+  return Object.fromEntries(
+    Object.entries(elementTypes).flatMap(([name, elementType]) => {
+      const standard = (
+        props: Parameters<typeof React.createElement>[1],
+        ...children: Parameters<typeof React.createElement>[2][]
+      ) => React.createElement(elementType, props, ...children);
+
+      return [
+        [name, standard],
+        [
+          `${name}$`,
+          (...children: Parameters<typeof standard>[1][]) =>
+            standard(null, ...children),
+        ],
+        [
+          `_${name}`,
+          (
+              p0: Parameters<typeof standard>[0],
+              ...children: Parameters<typeof standard>[1][]
+            ) =>
+            (p1: Parameters<typeof standard>[0]) =>
+              standard({ ...p0, ...p1 }, ...children),
+        ],
+        [
+          `_${name}$`,
+          (...children: Parameters<typeof standard>[1][]) =>
+            (props: Parameters<typeof standard>[0]) =>
+              standard(props, ...children),
+        ],
+      ];
+    }),
+  ) as RemoveNever<
+    StandardFactories<ElementTypes> &
+      SkipPropsFactories<ElementTypes> &
+      PartialFactories<ElementTypes> &
+      PartialSkipPropsFactories<ElementTypes>
+  >;
+};
+
+/**
+ * Factory functions for React Fragments.
+ * Supports standard and skip-props variants.
+ * @see factories
+ */
+export const { Fragment, Fragment$ } = factories({ Fragment: React.Fragment });
 
 /** Factory helper for HTML/SVG tags */
 const tag = <TagName extends keyof React.JSX.IntrinsicElements>(
   tagName: TagName,
-) => component(tagName, tagName);
+) => factories({ [tagName]: tagName } as Record<TagName, TagName>);
 
 // HTML Elements
 export const { a, a$, _a, _a$ } = tag("a");

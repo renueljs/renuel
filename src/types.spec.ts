@@ -1,11 +1,10 @@
 import type { CSSProperties, ReactNode } from "react";
 
-import { _a, _html, body$, component, head$, html, p$ } from "./index.ts";
+import { _a, _html, body$, factories, head$, html, p$ } from "./index.ts";
 
-const { Message, Message$ } = component(
-  "Message",
-  ({ children }: { children: string }) => p$(children),
-);
+const { Message, Message$ } = factories({
+  Message: ({ children }: { children: string }) => p$(children),
+});
 
 // @ts-expect-error children defined in props object instead of positionally
 Message({ children: "Hello world" });
@@ -16,10 +15,13 @@ Message({});
 // @ts-expect-error required children missing
 Message$();
 
-const sizableMessage = component(
-  "SizableMessage",
-  (_: { size: "sm" | "lg"; emphasis?: boolean; children?: ReactNode }) => p$(),
-);
+const sizableMessage = factories({
+  SizableMessage: (_: {
+    size: "sm" | "lg";
+    emphasis?: boolean;
+    children?: ReactNode;
+  }) => p$(),
+});
 
 // @ts-expect-error skip props factory when props are required
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -33,11 +35,13 @@ SizableMessage({}, "Hello world");
 // @ts-expect-error excess prop
 SizableMessage({ size: "sm", emphasis: true, foo: 1 }, "Hello world");
 
-const { Button$ } = component(
-  "Button",
-  ({ children }: { children: (_: { style: CSSProperties }) => ReactNode }) =>
-    children({ style: {} }),
-);
+const { Button$ } = factories({
+  Button: ({
+    children,
+  }: {
+    children: (_: { style: CSSProperties }) => ReactNode;
+  }) => children({ style: {} }),
+});
 
 // @ts-expect-error excess prop
 Button$(_a({ href: "#", asdf: 1 }));
