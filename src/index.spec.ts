@@ -5,7 +5,7 @@ import assert from "node:assert";
 import { after, afterEach, test } from "node:test";
 import { forwardRef } from "react";
 
-import { _div, _div$, component, div, div$ } from "./index.ts";
+import { _div, _div$, div, div$, factories } from "./index.ts";
 
 function spyOn<
   O,
@@ -90,10 +90,9 @@ test("div partial skip props factory", async () => {
 });
 
 {
-  const { TestComponent } = component(
-    "TestComponent",
-    forwardRef<HTMLDivElement>((_props, ref) => div({ ref })),
-  );
+  const { TestComponent } = factories({
+    TestComponent: forwardRef<HTMLDivElement>((_props, ref) => div({ ref })),
+  });
 
   test("ref forwarding", () => {
     let element: HTMLDivElement | null = null;

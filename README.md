@@ -45,11 +45,13 @@ Here's an example of using Renuel to create a simple counter app:
 ```typescript
 import { useReducer } from "react";
 import { createRoot } from "react-dom/client";
-import { button, component, strong$ } from "renuel";
+import { button, factories, strong$ } from "renuel";
 
-const { App$ } = component("App", () => {
-  const [count, onClick] = useReducer((x) => x + 1, 0);
-  return button({ onClick }, "Count: ", strong$(count));
+const { App$ } = factories({
+  App() {
+    const [count, onClick] = useReducer((x) => x + 1, 0);
+    return button({ onClick }, "Count: ", strong$(count));
+  }
 });
 
 const rootEl = document.getElementById("root");
@@ -71,18 +73,17 @@ Here's a simple `Button` component with a `variant` prop and children as the lab
 
 <!--prettier-ignore-start-->
 ```typescript
-import { component, button$ } from "renuel";
+import { factories, button$ } from "renuel";
 
-const { Button, Button$ } = component(
-  "Button",
-  ({
+const { Button, Button$ } = factories({
+  Button({
     variant = "secondary",
     children,
   }: {
     variant?: "primary" | "secondary";
     children?: React.ReactNode;
-  }) =>
-    button$(
+  }) {
+    return button$(
       {
         style:
           variant === "primary"
@@ -99,8 +100,9 @@ const { Button, Button$ } = component(
               }
       },
       children
-    )
-);
+    );
+  }
+});
 
 // Usage — props + children
 Button({ variant: "primary" }, "Click me")
@@ -124,18 +126,17 @@ To make the `Button` polymorphic, you can change `children` to a render prop (ak
 
 <!--prettier-ignore-start-->
 ```typescript
-import { component, button$, _a, _button$ } from "renuel";
+import { factories, button$, _a, _button$ } from "renuel";
 
-const { Button, Button$ } = component(
-  "Button",
-  ({
+const { Button, Button$ } = factories({
+  Button({
     variant = "secondary",
     children
   }: {
     variant?: "primary" | "secondary";
     children: (props: { style: React.CSSProperties }) => React.ReactNode;
-  }) =>
-    children({
+  }) {
+    return children({
       style:
         variant === "primary"
           ? {
@@ -150,7 +151,8 @@ const { Button, Button$ } = component(
               borderRadius: 4,
             }
     })
-);
+  }
+});
 
 // Usage — render as a link
 Button({ variant: "primary" }, _a({ href: "/docs" }, "Get started"));
