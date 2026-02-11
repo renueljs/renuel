@@ -73,11 +73,13 @@ type ChildrenArgs<Props> = Props extends { children?: infer Children }
  * @typeParam ExpectedProps - The expected props
  * @typeParam ActualProps - The provided props
  */
-type NoExcessProps<ExpectedProps, ActualProps> = ExpectedProps & {
-  [P in keyof ActualProps]: P extends keyof ExpectedProps
-    ? ExpectedProps[P]
-    : never;
-};
+type NoExcessProps<ExpectedProps, ActualProps> = ExpectedProps extends unknown
+  ? ExpectedProps & {
+      [P in keyof ActualProps]: P extends keyof ExpectedProps
+        ? ExpectedProps[P]
+        : never;
+    }
+  : never;
 
 /**
  * Extracts component props from a React element type, including data attributes
