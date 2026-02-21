@@ -45,14 +45,15 @@ Here's an example of using Renuel to create a simple counter app:
 ```typescript
 import { useReducer } from "react";
 import { createRoot } from "react-dom/client";
-import { button, factories, strong$ } from "renuel";
+import { button, component, strong$ } from "renuel";
+import type { ComponentChildren, Exact } from "renuel";
 
-const { App$ } = factories({
-  App() {
-    const [count, onClick] = useReducer((x) => x + 1, 0);
-    return button({ onClick }, "Count: ", strong$(count));
-  }
+const { App } = component(<Props>(props: Exact<React.Attributes, Props>) => {
+  const [count, onClick] = useReducer((x) => x + 1, 0);
+  return button({ onClick }, "Count: ", strong$(count));
 });
+
+const App$ = (...children: ComponentChildren<typeof App>) => App({}, ...children);
 
 const rootEl = document.getElementById("root");
 if (rootEl) {
@@ -65,106 +66,9 @@ if (rootEl) {
 <!--demo-end-->
 <!--prettier-ignore-end-->
 
-## Custom components
-
-### Basic
-
-Here's a simple `Button` component with a `variant` prop and children as the label:
-
-<!--prettier-ignore-start-->
-```typescript
-import { factories, button$ } from "renuel";
-
-const { Button, Button$ } = factories({
-  Button({
-    variant = "secondary",
-    children,
-  }: {
-    variant?: "primary" | "secondary";
-    children?: React.ReactNode;
-  }) {
-    return button$(
-      {
-        style:
-          variant === "primary"
-            ? {
-                background: "blue",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: 4,
-              }
-            : {
-                background: "lightgray",
-                padding: "0.5rem 1rem",
-                borderRadius: 4,
-              }
-      },
-      children
-    );
-  }
-});
-
-// Usage — props + children
-Button({ variant: "primary" }, "Click me")
-
-// Usage — skip props (defaults to "secondary" variant)
-Button$("Cancel")
-```
-<!--prettier-ignore-end-->
-
-### Polymorphic
-
-Polymorphic components let you reuse styling while rendering different
-underlying elements. The canonical example is a `Button` component that can be
-rendered as an HTML `button` element or as an `a` element, but looks the same
-either way.
-
-Renuel makes this type of composition explicit through a render prop, ensuring
-both flexibility and type safety.
-
-To make the `Button` polymorphic, you can change `children` to a render prop (aka [Function as Child Component](https://reactpatterns.js.org/docs/function-as-child-component/)):
-
-<!--prettier-ignore-start-->
-```typescript
-import { factories, button$, _a, _button$ } from "renuel";
-
-const { Button, Button$ } = factories({
-  Button({
-    variant = "secondary",
-    children
-  }: {
-    variant?: "primary" | "secondary";
-    children: (props: { style: React.CSSProperties }) => React.ReactNode;
-  }) {
-    return children({
-      style:
-        variant === "primary"
-          ? {
-              background: "blue",
-              color: "white",
-              padding: "0.5rem 1rem",
-              borderRadius: 4,
-            }
-          : {
-              background: "lightgray",
-              padding: "0.5rem 1rem",
-              borderRadius: 4,
-            }
-    })
-  }
-});
-
-// Usage — render as a link
-Button({ variant: "primary" }, _a({ href: "/docs" }, "Get started"));
-
-// Usage — render as a plain button
-Button$(_button$("Default button"));
-```
-<!--prettier-ignore-end-->
-
 ## Factories
 
-Each tag (or custom component) comes with four factory variants:
+Each intrinsic HTML element comes with four factory variants:
 
 1. `tag` (`Component`): standard factory; accepts props + children.
 2. `tag$` (`Component$`): skip-props factory; accepts children only.
@@ -194,7 +98,143 @@ _div$("Hello")({ className: "foo" })               // partial skip-props
 > factory as a child to a polymorphic component, which is then responsible for
 > supplying the remaining props.
 
-This pattern applies to both native tags and custom components, making composition predictable and type-safe with minimal syntax.
+This pattern applies to both native tags and custom components, making
+composition predictable and type-safe with minimal syntax.
+
+## Custom components
+
+### Basic
+
+Here's a simple `Button` component with a `variant` prop and children as the label:
+
+<!--prettier-ignore-start-->
+```typescript
+import { component, button$ } from "renuel";
+import type { ComponentChildren, Exact } from "renuel";
+
+const { Button } = component(<Props>(
+  { variant = "secondary" }: Exact<{
+    variant?: "primary" | "secondary";
+  }, Props>,
+  ...children: React.ReactNode[]
+) => {
+  return button$(
+    {
+      style:
+        variant === "primary"
+          ? {
+              background: "blue",
+              color: "white",
+              padding: "0.5rem 1rem",
+              borderRadius: 4,
+            }
+          : {
+              background: "lightgray",
+              padding: "0.5rem 1rem",
+              borderRadius: 4,
+            }
+    },
+    ...children
+  );
+});
+
+const Button$ = (...children: ComponentChildren<typeof Button>) => Button({}, ...children);
+
+// Usage — props + children
+Button({ variant: "primary" }, "Click me")
+
+// Usage — skip props (defaults to "secondary" variant)
+Button$("Cancel")
+```
+<!--prettier-ignore-end-->
+
+### Polymorphic
+
+Polymorphic components let you reuse styling while rendering different
+underlying elements. The canonical example is a `Button` component that can be
+rendered as an HTML `button` element or as an `a` element, but looks the same
+either way.
+
+Renuel makes this type of composition explicit through a render prop, ensuring
+both flexibility and type safety.
+
+To make the `Button` polymorphic, you can change `children` to a render callback
+(aka [Function as Child
+Component](https://reactpatterns.js.org/docs/function-as-child-component/)):
+
+<!--prettier-ignore-start-->
+```typescript
+import { component, button$, _a, _button$ } from "renuel";
+import type { ComponentChildren, Exact } from "renuel";
+
+const { Button } = component<Props>((
+  { variant = "secondary" }: Exact<{
+    variant?: "primary" | "secondary";
+  }, Props>,
+  render: (props: { style: React.CSSProperties }) => React.ReactNode
+) => {
+  return render({
+    style:
+      variant === "primary"
+        ? {
+            background: "blue",
+            color: "white",
+            padding: "0.5rem 1rem",
+            borderRadius: 4,
+          }
+        : {
+            background: "lightgray",
+            padding: "0.5rem 1rem",
+            borderRadius: 4,
+          }
+  });
+});
+
+const Button$ = (...children: ComponentChildren<typeof Button>) => Button({}, ...children);
+
+// Usage — render as a link
+Button({ variant: "primary" }, _a({ href: "/docs" }, "Get started"));
+
+// Usage — render as a plain button
+Button$(_button$("Default button"));
+```
+<!--prettier-ignore-end-->
+
+### Authoring
+
+Custom component development begins by defining a standard factory (the "base
+component") via the component function. This utility acts as a higher-order
+wrapper that transforms a functional implementation into a render-safe factory
+compatible with React Hooks.
+
+The component function performs two primary internal tasks:
+
+1. **Component identity**: It assigns a `displayName` to the function, ensuring
+   the component is correctly identified within React DevTools and error
+   boundaries.
+2. **Hook & lifecycle support**: It ensures that factory invocations are
+   processed through React's internal rendering engine. By wrapping the
+   execution, it allows the component to support React Hooks and lifecycle
+   management, which would otherwise be unavailable through standard function
+   calls.
+
+Once the base component is established, the three additional factory
+variants—skip-props, partial, and partial skip-props—are manually defined as plain
+functions to extend the component's API.
+
+#### Streamlining with VSCode Snippets
+
+To accelerate development and maintain architectural consistency, pre-configured
+snippets are available [here](.vscode/renuel.code-snippets). These snippets
+automate the generation of the standard factory along with its associated
+variants.
+
+The following snippets are provided:
+
+- **rc**: Standard component implementation, suitable for the majority of use
+  cases.
+- **rgc**: Generic component implementation, intended for components requiring
+  polymorphic or generic type parameters.
 
 ## Versus JSX
 
