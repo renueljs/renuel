@@ -1,0 +1,36 @@
+{
+  "Renuel Component": {
+    "scope": "typescript",
+    "prefix": "rc",
+    "body": [
+      "import type { ComponentChildren, ComponentProps, Exact, SafeOmit } from \"renuel\";",
+      "import { component } from \"renuel\";",
+      "",
+      "export const { ${1:Button} } = component(<Props>(_props: Exact<React.Attributes, Props>, render: (props: { className: string }) => React.ReactNode) => render({ className: \"renuel-${1/([A-Z])|([a-z])/${1:/downcase}${2:/downcase}/g}\" })$0);",
+      "",
+      "export const ${1:Button}$ = (...children: ComponentChildren<typeof ${1:Button}>) => ${1:Button}({}, ...children);",
+      "",
+      "export const _${1:Button} = <A>(a: Exact<Partial<ComponentProps<typeof ${1:Button}>>, A>, ...children: ComponentChildren<typeof ${1:Button}>) => <B>(b: Exact<SafeOmit<ComponentProps<typeof ${1:Button}>, keyof A>, B>) => ${1:Button}({ ...b, ...a }, ...children);",
+      "",
+      "export const _${1:Button}$ = (...children: ComponentChildren<typeof ${1:Button}>) => <Props>(props: Exact<ComponentProps<typeof ${1:Button}>, Props>) => ${1:Button}(props, ...children);"
+    ],
+    "description": "Renuel component with excess prop checking and factory variants"
+  },
+  "Renuel Generic Component": {
+    "scope": "typescript",
+    "prefix": "rgc",
+    "body": [
+      "import type { ComponentChildren, ComponentProps, Exact, SafeOmit } from \"renuel\";",
+      "import { component } from \"renuel\";",
+      "",
+      "export const { ${1:List} } = component(<${2:Item}, Props = unknown>(props: Exact<{ items: ${2:Item}[] } & React.Attributes, Props>, render: (item: ${2:Item}, index: number) => React.ReactNode) => props.items.map((item, index) => render(item, index)),$0);",
+      "",
+      "export const ${1:List}$ = <${2:Item}>(...children: ComponentChildren<typeof ${1:List}<${2:Item}>>) => ${1:List}({ items: [] }, ...children);",
+      "",
+      "export const _${1:List} = <A, ${2:Item} = A extends Partial<ComponentProps<typeof ${1:List}<infer T>>> ? T : unknown>(a: Exact<Partial<ComponentProps<typeof ${1:List}<${2:Item}>>>, A>, ...children: ComponentChildren<typeof ${1:List}<${2:Item}, A>>) => <B>(b: Exact<SafeOmit<ComponentProps<typeof ${1:List}<${2:Item}>>, keyof A>, B>) => ${1:List}({ ...b, ...a } as ComponentProps<typeof ${1:List}<${2:Item}>>, ...children);",
+      "",
+      "export const _${1:List}$ = <${2:Item}>(...children: ComponentChildren<typeof ${1:List}<${2:Item}>>) => <Props>(props: Exact<ComponentProps<typeof ${1:List}<${2:Item}>>, Props>) => ${1:List}(props, ...children);"
+    ],
+    "description": "Generic Renuel component with excess prop checking and factory variants"
+  }
+}
