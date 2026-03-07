@@ -6,6 +6,10 @@ on:
       - latest
       - next
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -17,7 +21,7 @@ jobs:
       - id: app_token
         uses: actions/create-github-app-token@v1
         with:
-          app-id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          app-id: ${{ vars.RELEASE_BOT_APP_ID }}
           private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
 
       - uses: actions/checkout@v4
@@ -30,10 +34,6 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-          registry-url: "https://registry.npmjs.org/"
-          always-auth: true
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - run: npm ci
 
@@ -63,10 +63,10 @@ jobs:
       - run: node scripts/readme.ts --ref v${{ steps.version.outputs.NEW_VERSION }} --npm
 
       - if: github.ref_name == 'latest'
-        run: npm publish
+        run: npm publish --provenance
 
       - if: github.ref_name == 'next'
-        run: npm publish --tag next
+        run: npm publish --provenance --tag next
 
   cleanup:
     runs-on: ubuntu-latest

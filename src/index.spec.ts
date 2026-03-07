@@ -3,8 +3,8 @@ import "global-jsdom/register";
 import { render } from "@testing-library/react";
 import assert from "node:assert";
 import { after, afterEach, test } from "node:test";
-import { forwardRef } from "react";
 
+import type { ComponentChildren, ComponentProps, Exact } from "./index.ts";
 import { _div, _div$, component, div, div$ } from "./index.ts";
 
 function spyOn<
@@ -90,10 +90,14 @@ test("div partial skip props factory", async () => {
 });
 
 {
-  const { TestComponent } = component(
-    "TestComponent",
-    forwardRef<HTMLDivElement>((_props, ref) => div({ ref })),
+  const TestComponent = component(
+    <Props>(
+      props: Exact<ComponentProps<typeof div>, Props>,
+      ...children: ComponentChildren<typeof div>
+    ) => div(props, ...children),
   );
+
+  TestComponent.displayName = "TestComponent";
 
   test("ref forwarding", () => {
     let element: HTMLDivElement | null = null;

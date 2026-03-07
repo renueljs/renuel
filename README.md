@@ -4,10 +4,10 @@
 </p>
 
 <p align="center" id="badges">
-  <a href="https://github.com/renueljs/renuel/tree/v0.0.20"><img src="https://img.shields.io/badge/tag-v0.0.20-blue" alt="tag v0.0.20"></a>
-  <a href="https://www.npmjs.com/package/renuel/v/0.0.20"><img src="https://img.shields.io/badge/npm-v0.0.20-blue" alt="npm version"></a>
-  <a href="https://bundlephobia.com/package/renuel@v0.0.20"><img src="https://img.shields.io/bundlephobia/minzip/renuel@v0.0.20?label=bundle%20size&color=blue" alt="npm v0.0.20 version bundle size"></a>
-  <a href="https://github.com/renueljs/renuel/blob/v0.0.20/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="license"></a>
+  <a href="https://github.com/renueljs/renuel/tree/v0.1.0-next.1"><img src="https://img.shields.io/badge/tag-v0.1.0--next.1-orange" alt="tag v0.1.0-next.1"></a>
+  <a href="https://www.npmjs.com/package/renuel/v/0.1.0-next.1"><img src="https://img.shields.io/badge/npm-v0.1.0--next.1-orange" alt="npm version"></a>
+  <a href="https://bundlephobia.com/package/renuel@v0.1.0-next.1"><img src="https://img.shields.io/bundlephobia/minzip/renuel@v0.1.0-next.1?label=bundle%20size&color=orange" alt="npm v0.1.0-next.1 version bundle size"></a>
+  <a href="https://github.com/renueljs/renuel/blob/v0.1.0-next.1/LICENSE"><img src="https://img.shields.io/badge/license-MIT-orange" alt="license"></a>
 </p>
 
 <hr>
@@ -46,127 +46,29 @@ Here's an example of using Renuel to create a simple counter app:
 import { useReducer } from "react";
 import { createRoot } from "react-dom/client";
 import { button, component, strong$ } from "renuel";
+import type { ComponentChildren, Exact } from "renuel";
 
-const { App$ } = component("App", () => {
+const App = component(<Props>(props: Exact<React.Attributes, Props>) => {
   const [count, onClick] = useReducer((x) => x + 1, 0);
   return button({ onClick }, "Count: ", strong$(count));
 });
+
+const App$ = (...children: ComponentChildren<typeof App>) => App({}, ...children);
 
 const rootEl = document.getElementById("root");
 if (rootEl) {
   const root = createRoot(rootEl);
   root.render(App$());
 }
-
-
-
-
 ```
 
-[![Edit in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/api/v1/sandboxes/define?parameters=N4IgZglgNgpgziAXKAhgBzQOgBYBcC2USoAxgPYB2uMVSIAPAIQAmZJuAnmjAAR6EA%2BADoV6%2FKMIo8eYmCmaTp0%2Bvhi4UPEthQAnOGoC8QkAFUAKgDEAtAA5jPAPSKlKtRoopVRkADcIMAHc0Mh1ce3IqGlxvAIhmXGwDZhg%2FEhgrWPjsABoeCAoIXAgUKCs4EhKYAwBGTAAGeycRJRki3FgBACUaAFcYKB4AERh8MnoHNo7mmQdsOQVp%2BgAjMmYOZ2VmCB885m8dMjIwkAFxrZ8NmXKdCDRcHk5ub1HmHth7OB0Sb0wHfBR8phcHBjKcHNdbrhnOMVmtJONxJIQABfbIgNAoEgAaxQAHMYJgAFZwSjEEARai0RAgYDTYweVTGRA8Yw6Xr9KzJUbGbJ03wwPQQShMlkgWp1eo8vnJCF3IUUEXGboUPoDLlkHhoA6EmDsKVSUX%2FfKKkDoLDifXSYyy4Ei2kGq0gODqUImjFffo8M04AhQYzTVHSmDcCjJCgkfwgpA8e0tYwAAUe8AcbMxx2ZxmqAE5MAAmPOWpQJpNwFNydicsj4E3ZvMFkC8h2i1N66OZnP5hoN6aOlu4SvVttijuS7tN4zutJ%2Bof56oANlHjbjIDZKv6JolEtzXaXRZAJZINzuJoArJgcwBmf0G5EiZEotHAiKQXFEkkUMkUqJ0WOi8j4NBoAFAB5OVKCjZlf0dF18XTUUAFEAGVt23QtHR6fRhkgCgYAsEIAGEoBQOA4AsfwoGYCCHh0Ppd0dF43hgE0kIAORgAAPY46NFKAICWEUAG0ez3JCUJ3YTHUGYCAFk0L3KTpMwABJagdBQJZ3hAYSAF1uOtLFbgAGT4%2FC5mxEVcBomA9JABjYG6EkoB6IphSHJYelDWAdDk4wSigMgAiUgCQiKChcTMOB4M4mg4HlKjLNo4TWXgMgoB8GAACl32k1ZGIsqybIgRyUGoZgcteWB4oKpKQAoMh4PwQp8sS8cnUsiBW2ZBLrJquqTBVfRmEMtgSiqlrlz6gaYGYAAFXRPDUAUxp61q6osPyEgOHpcWwfDiPgJSKEQ2JcC0ZqmJvXdjHyEgnOSQSaqNCggSjaZtLvB9bIBZ7gU%2FShKVwOgIGC0IYx4DCYG6V40h0HhkR4MADnwZty2OABuERgeCUHgE0VNqE6Q57nhxGqxRtMBwcW7%2FCoYwMYKEH7lx9zcFwShcn%2FYIcKoXJnQOMKABI4YRpGUbXad6ZECJnTBgBBDAhfhgxNCrLmogACmMeW0B5Hh1YASh4AwBBjaZpfuATyA83BckoQiOqxbSjfB%2FQoZ6GH1fV9jDeNnh2J4ABqHhqlyOp9fp6Q2VwHodCkFm2YodXcbt3jsTh3JjHwshrYzBseD5yhcQF9WraofXw7vCuFXDcD7gOI54IGZXWBIHpVCoTBYMbkYogAIQ4JTmE1lcieMKuIDAPX69wRvDd%2Fc2eGn53DzkAmifV6fZ4jxeicwVdkh0dXteL8v6fvZEL6AA%3D%3D%3D)
+[![Edit in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/api/v1/sandboxes/define?parameters=N4IgZglgNgpgziAXKAhgBzQOgBYBcC2USoAxgPYB2uMVSIAPAIQAmZJuAnmjAAR6EA%2BADoV6%2FKMIo8eYmCmaTp0%2Bvhi4UPEthQAnOGoC8QkAFUAKgDEAtAA5jPAPSKlKtRoopVRkADcIMAHc0Mh1ce3IqGlxvAIhmXGwDZhg%2FEhgrWPjsABoeCAoIXAgUKCs4EhKYAwBGTAAGeycRJRki3FgBACUaAFcYKB4AERh8MnoHNo7mmQdsOQVp%2BgAjMmYOZ2VmCB885m8dMjIwkAFxrZ8NmXKdCDRcHk5ub1HmHth7OB0Sb0wHfBR8phcHBjKcHNdbrhnOMVmtJONxJIQABfbIgNAoEgAaxQAHMYJgAFZwSjEEARai0RAgYDTYweVTGRA8Yw6Xr9KzJUbGbJ03wwPQQShMlkgWp1eo8vnJCF3IUUEXGboUPoDLlkHhoA6EmDsKVSUX%2FfKKkDoLDifXSYyy4Ei2kGq0gODqUImjFffo8M04AhQYzTVHSmDcCjJCgkfwgpA8e0tYwAAUe8AcbMxx2ZxmqAE5MAAmPOWpQJpNwFNydicsj4E3ZvMFkC8h2i1N66OZnP5hoN6aOlu4SvVttijuS7tN4zutJ%2Bof56oANlHjbjIDZKv6Jol4qsFBgAA9cJhqoXHSWSDc7iaAKyYHMAZn9BuRImRKLRwIikFxRJJFDJFKidCxqK5D4Gg0ACgA8nKlBRsyQEnro%2BLpqKACiADKuZ1Jhx6ij0%2BjDJAO4WCEADCUAoHAcAWP4UDMLBDw6H0S5FiALxvDAJroQAcnuxzMY6UAQEsIoANo9ix6GYdhY4tI6gwQQAsjhcmKZgACS1A6CgSzvCA4kALr8aKcBYrcAAyQkkXM2IirgjEwEZxhsbA3QklAPRFMKQ5LD0oawDoOHGCUUBkAEamgSERQULiZhwCh%2B40HA8r0XZTHiay8BkFAPgwAAUj%2BCmrOxtn2Y5IAQG5KDUMwhWvLAKWlelIAUGQKH4IUJVpeOTp2RArbMqlDlNS1JgqvozBmWwJQNV1y4jWNMDMAACronhqAKM1Dd1LUWMFCQHD0uLYCRFHwGpFBobEuBaJ1HGPsxxj5CQ7nJKJTVGhQQJRtM%2BnPq%2BrEAp9wJ%2FpQlK4HQEARaEMY8HhMDdK8aQ6DwyI8GABz4M25bHAA3CIkPBNDwCaKm1CdIc9yo%2BjVZY2mA4OM9%2FhUMYeMFFD9zEz5uC4JQuQgcEO5ULkzoHNFAAkKNoxjWNrtOrME5FDxcLwxMkVWAtRFZ0DMKuuTxWmkvU5jGWyyzIgiBEzo8AAghgPAGJo6uUFEAAU9BLQcaBwAILtamQXvMvr7D0N0aaYNb3M3Fz8C5B7%2FvewAlPbAgxtMlv3CJ5C%2BbguSUGRfVYvp9uw%2FoCM9EjLsu7uScGCnu48AA1Dw1S5HUCes9IbK4D0OhSFzPMUC7xN54J2Io7kxhq9nGYNjwIuULiYsu1nVAJ%2B3z7rwq4YwfcttoBLDsu5gx9aNrq7MmrEWC7gWu0au9BJmQYA2xgAg1yne9D6iPDH5gp93zQTeFsd48AOEcFCAwHasBID0VQVBMBIQgSMKIAAhDgalmAu1ZBTYwm8IDPxdmA3AECk5AXTqAimxczxyDJhTQhFMSEdwoUcTAq5kg6BdnvJea9WYvmRPwoAA%3D%3D%3D)
 <!--demo-end-->
-<!--prettier-ignore-end-->
-
-## Custom components
-
-### Basic
-
-Here's a simple `Button` component with a `variant` prop and children as the label:
-
-<!--prettier-ignore-start-->
-```typescript
-import { component, button$ } from "renuel";
-
-const { Button, Button$ } = component(
-  "Button",
-  ({
-    variant = "secondary",
-    children,
-  }: {
-    variant?: "primary" | "secondary";
-    children?: React.ReactNode;
-  }) =>
-    button$(
-      {
-        style:
-          variant === "primary"
-            ? {
-                background: "blue",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: 4,
-              }
-            : {
-                background: "lightgray",
-                padding: "0.5rem 1rem",
-                borderRadius: 4,
-              }
-      },
-      children
-    )
-);
-
-// Usage — props + children
-Button({ variant: "primary" }, "Click me")
-
-// Usage — skip props (defaults to "secondary" variant)
-Button$("Cancel")
-```
-<!--prettier-ignore-end-->
-
-### Polymorphic
-
-Polymorphic components let you reuse styling while rendering different
-underlying elements. The canonical example is a `Button` component that can be
-rendered as an HTML `button` element or as an `a` element, but looks the same
-either way.
-
-Renuel makes this type of composition explicit through a render prop, ensuring
-both flexibility and type safety.
-
-To make the `Button` polymorphic, you can change `children` to a render prop (aka [Function as Child Component](https://reactpatterns.js.org/docs/function-as-child-component/)):
-
-<!--prettier-ignore-start-->
-```typescript
-import { component, button$, _a, _button$ } from "renuel";
-
-const { Button, Button$ } = component(
-  "Button",
-  ({
-    variant = "secondary",
-    children
-  }: {
-    variant?: "primary" | "secondary";
-    children: (props: { style: React.CSSProperties }) => React.ReactNode;
-  }) =>
-    children({
-      style:
-        variant === "primary"
-          ? {
-              background: "blue",
-              color: "white",
-              padding: "0.5rem 1rem",
-              borderRadius: 4,
-            }
-          : {
-              background: "lightgray",
-              padding: "0.5rem 1rem",
-              borderRadius: 4,
-            }
-    })
-);
-
-// Usage — render as a link
-Button({ variant: "primary" }, _a({ href: "/docs" }, "Get started"));
-
-// Usage — render as a plain button
-Button$(_button$("Default button"));
-```
 <!--prettier-ignore-end-->
 
 ## Factories
 
-Each tag (or custom component) comes with four factory variants:
+Each intrinsic HTML element comes with four factory variants:
 
 1. `tag` (`Component`): standard factory; accepts props + children.
 2. `tag$` (`Component$`): skip-props factory; accepts children only.
@@ -196,7 +98,143 @@ _div$("Hello")({ className: "foo" })               // partial skip-props
 > factory as a child to a polymorphic component, which is then responsible for
 > supplying the remaining props.
 
-This pattern applies to both native tags and custom components, making composition predictable and type-safe with minimal syntax.
+This pattern applies to both native tags and custom components, making
+composition predictable and type-safe with minimal syntax.
+
+## Custom components
+
+### Basic
+
+Here's a simple `Button` component with a `variant` prop and children as the label:
+
+<!--prettier-ignore-start-->
+```typescript
+import { component, button$ } from "renuel";
+import type { ComponentChildren, Exact } from "renuel";
+
+const Button = component(<Props>(
+  { variant = "secondary" }: Exact<{
+    variant?: "primary" | "secondary";
+  }, Props>,
+  ...children: React.ReactNode[]
+) => {
+  return button$(
+    {
+      style:
+        variant === "primary"
+          ? {
+              background: "blue",
+              color: "white",
+              padding: "0.5rem 1rem",
+              borderRadius: 4,
+            }
+          : {
+              background: "lightgray",
+              padding: "0.5rem 1rem",
+              borderRadius: 4,
+            }
+    },
+    ...children
+  );
+});
+
+const Button$ = (...children: ComponentChildren<typeof Button>) => Button({}, ...children);
+
+// Usage — props + children
+Button({ variant: "primary" }, "Click me")
+
+// Usage — skip props (defaults to "secondary" variant)
+Button$("Cancel")
+```
+<!--prettier-ignore-end-->
+
+### Polymorphic
+
+Polymorphic components let you reuse styling while rendering different
+underlying elements. The canonical example is a `Button` component that can be
+rendered as an HTML `button` element or as an `a` element, but looks the same
+either way.
+
+Renuel makes this type of composition explicit through a render prop, ensuring
+both flexibility and type safety.
+
+To make the `Button` polymorphic, you can change `children` to a render callback
+(aka [Function as Child
+Component](https://reactpatterns.js.org/docs/function-as-child-component/)):
+
+<!--prettier-ignore-start-->
+```typescript
+import { component, button$, _a, _button$ } from "renuel";
+import type { ComponentChildren, Exact } from "renuel";
+
+const Button = component<Props>((
+  { variant = "secondary" }: Exact<{
+    variant?: "primary" | "secondary";
+  }, Props>,
+  render: (props: { style: React.CSSProperties }) => React.ReactNode
+) => {
+  return render({
+    style:
+      variant === "primary"
+        ? {
+            background: "blue",
+            color: "white",
+            padding: "0.5rem 1rem",
+            borderRadius: 4,
+          }
+        : {
+            background: "lightgray",
+            padding: "0.5rem 1rem",
+            borderRadius: 4,
+          }
+  });
+});
+
+const Button$ = (...children: ComponentChildren<typeof Button>) => Button({}, ...children);
+
+// Usage — render as a link
+Button({ variant: "primary" }, _a({ href: "/docs" }, "Get started"));
+
+// Usage — render as a plain button
+Button$(_button$("Default button"));
+```
+<!--prettier-ignore-end-->
+
+### Authoring
+
+Custom component development begins by defining a standard factory (the "base
+component") via the component function. This utility acts as a higher-order
+wrapper that transforms a functional implementation into a render-safe factory
+compatible with React Hooks.
+
+The component function performs two primary internal tasks:
+
+1. **Component identity**: It assigns a `displayName` to the function, ensuring
+   the component is correctly identified within React DevTools and error
+   boundaries.
+2. **Hook & lifecycle support**: It ensures that factory invocations are
+   processed through React's internal rendering engine. By wrapping the
+   execution, it allows the component to support React Hooks and lifecycle
+   management, which would otherwise be unavailable through standard function
+   calls.
+
+Once the base component is established, the three additional factory
+variants—skip-props, partial, and partial skip-props—are manually defined as plain
+functions to extend the component's API.
+
+#### Streamlining with VSCode Snippets
+
+To accelerate development and maintain architectural consistency, pre-configured
+snippets are available [here](.vscode/renuel.code-snippets). These snippets
+automate the generation of the standard factory along with its associated
+variants.
+
+The following snippets are provided:
+
+- **rc**: Standard component implementation, suitable for the majority of use
+  cases.
+- **rgc**: Generic component implementation, intended for components requiring
+  polymorphic or generic type parameters.
 
 ## Versus JSX
 
