@@ -3,14 +3,16 @@ import type { CSSProperties, ReactNode } from "react";
 import type { Exact } from "./index.ts";
 import { _a, _html, body$, component, head$, html, p$ } from "./index.ts";
 
-const { Message } = component((_: React.Attributes, children: string) =>
+const Message = component((_: React.Attributes, children: string) =>
   p$(children),
 );
+
+Message.displayName = "Message";
 
 // @ts-expect-error children defined in props object instead of positionally
 Message({ children: "Hello world" });
 
-const { SizableMessage } = component(
+const SizableMessage = component(
   <Props>(
     _props: Exact<{ size: "sm" | "lg"; emphasis?: boolean }, Props>,
     _children?: ReactNode,
@@ -28,7 +30,7 @@ type ButtonProps = Record<string, unknown>;
 
 type ButtonChildren = (_: { style: CSSProperties }) => ReactNode;
 
-const { Button } = component((_props: ButtonProps, children: ButtonChildren) =>
+const Button = component((_props: ButtonProps, children: ButtonChildren) =>
   children({ style: {} }),
 );
 
