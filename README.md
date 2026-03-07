@@ -48,7 +48,7 @@ import { createRoot } from "react-dom/client";
 import { button, component, strong$ } from "renuel";
 import type { ComponentChildren, Exact } from "renuel";
 
-const { App } = component(<Props>(props: Exact<React.Attributes, Props>) => {
+const App = component(<Props>(props: Exact<React.Attributes, Props>) => {
   const [count, onClick] = useReducer((x) => x + 1, 0);
   return button({ onClick }, "Count: ", strong$(count));
 });
@@ -112,7 +112,7 @@ Here's a simple `Button` component with a `variant` prop and children as the lab
 import { component, button$ } from "renuel";
 import type { ComponentChildren, Exact } from "renuel";
 
-const { Button } = component(<Props>(
+const Button = component(<Props>(
   { variant = "secondary" }: Exact<{
     variant?: "primary" | "secondary";
   }, Props>,
@@ -167,7 +167,7 @@ Component](https://reactpatterns.js.org/docs/function-as-child-component/)):
 import { component, button$, _a, _button$ } from "renuel";
 import type { ComponentChildren, Exact } from "renuel";
 
-const { Button } = component<Props>((
+const Button = component<Props>((
   { variant = "secondary" }: Exact<{
     variant?: "primary" | "secondary";
   }, Props>,

@@ -123,42 +123,37 @@ export const component = <
   T extends (...args: any) => unknown, // eslint-disable-line @typescript-eslint/no-explicit-any
 >(
   implementation: T,
-) =>
-  new Proxy({} as Record<string, T>, {
-    get(target, displayName: string) {
-      if (typeof displayName !== "string") {
-        throw new Error("Invalid key");
-      }
+): T & { displayName?: string } => {
+  const Component = React.forwardRef(
+    (props, ref) =>
+      implementation(
+        {
+          ...props,
+          children: undefined,
+          ref,
+        },
+        ...("children" in props
+          ? Array.isArray(props.children)
+            ? props.children
+            : [props.children]
+          : []),
+      ) as React.ReactNode,
+  );
 
-      const cache = target as Record<string, React.ComponentType>;
-
-      if (!cache[displayName]) {
-        cache[displayName] = Object.assign(
-          React.forwardRef(
-            (props, ref) =>
-              implementation(
-                {
-                  ...props,
-                  children: undefined,
-                  ref,
-                },
-                ...("children" in props
-                  ? Array.isArray(props.children)
-                    ? props.children
-                    : [props.children]
-                  : []),
-              ) as React.ReactNode,
-          ),
-          {
-            displayName,
-          },
-        );
-      }
-
-      return (props: React.Attributes, ...children: React.ReactNode[]) =>
-        React.createElement(cache[displayName], props, ...children);
+  return new Proxy(
+    (props: React.Attributes, ...children: React.ReactNode[]) =>
+      React.createElement(Component, props, ...children),
+    {
+      get(Component, property) {
+        return Component[property as keyof typeof Component];
+      },
+      set(Component, property, value) {
+        Object.assign(Component, { [property]: value });
+        return true;
+      },
     },
-  });
+  ) as ReturnType<typeof component<T>>;
+};
 
 export const {
   a,
@@ -946,7 +941,7 @@ restTags satisfies Record<string, never>;
  * Useful for grouping multiple elements without adding an extra node to the
  * DOM, while maintaining the standard Renuel `(props, ...children)` signature.
  */
-export const { Fragment } = component(
+export const Fragment = component(
     (props: React.Attributes, ...children: React.ReactNode[]) =>
       React.createElement(React.Fragment, props, ...children),
   ),
@@ -966,3 +961,5 @@ export const { Fragment } = component(
    * ```
    */
   Fragment$ = (...children: React.ReactNode[]) => Fragment({}, ...children);
+
+Fragment.displayName = "Fragment";

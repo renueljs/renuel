@@ -90,12 +90,14 @@ test("div partial skip props factory", async () => {
 });
 
 {
-  const { TestComponent } = component(
+  const TestComponent = component(
     <Props>(
       props: Exact<ComponentProps<typeof div>, Props>,
       ...children: ComponentChildren<typeof div>
     ) => div(props, ...children),
   );
+
+  TestComponent.displayName = "TestComponent";
 
   test("ref forwarding", () => {
     let element: HTMLDivElement | null = null;
